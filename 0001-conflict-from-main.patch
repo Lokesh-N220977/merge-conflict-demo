@@ -1,0 +1,20 @@
+From c64e87a0e34a8c6d6706f107228ea2c11774139c Mon Sep 17 00:00:00 2001
+From: Lokeshwar Reddy <n220977@rguktn.ac.in>
+Date: Tue, 31 Mar 2026 15:45:49 +0530
+Subject: [PATCH] conflict from main
+
+---
+ file1.txt | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 file1.txt
+
+diff --git a/file1.txt b/file1.txt
+new file mode 100644
+index 0000000..fff2c1b
+--- /dev/null
++++ b/file1.txt
+@@ -0,0 +1 @@
++conflict line
+-- 
+2.52.0.windows.1
+

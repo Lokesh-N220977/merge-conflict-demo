@@ -1,0 +1,3 @@
+[submodule "submodule-demo"]
+	path = submodule-demo
+	url = https://github.com/Lokesh-N220977/git-demo-practice.git
