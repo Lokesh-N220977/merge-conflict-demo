@@ -1,5 +1,5 @@
 function allowEntry(age) {
-    if (age > 21) {
+    if (age < 21) {
         return "Access Granted";
     } else {
         return "Access Denied";
