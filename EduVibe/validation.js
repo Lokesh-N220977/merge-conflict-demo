@@ -5,7 +5,7 @@
  */
 export const validateAge = (age) => {
 
-    return age >= 18 && age <= 35;
+    return age >= 18 && age < 30;
 
 };
 
