@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | EduVibe</title>
+    <meta name="description"
+        content="Sign up for EduVibe and start your first professional certification program today.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">EduVibe</a>
+        <div class="nav-links">
+            <a href="index.html">Programs</a>
+            <a href="courses.html">Certifications</a>
+            <a href="about.html">Our Approach</a>
+        </div>
+        <a href="register.html" class="nav-cta">Get Certified</a>
+    </nav>
+
+    <div class="background-blobs"></div>
+
+    <main class="centered-main">
+        <div class="glass-card" style="border-top: 4px solid var(--primary);">
+            <header>
+                <div style="font-size: 2rem; margin-bottom: 1rem;">🎓</div>
+                <h1 style="color: var(--primary); font-size: 2rem;">Create Your Account</h1>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Join 80,000+ professionals building their
+                    careers with EduVibe</p>
+            </header>
+
+            <form id="registrationForm">
+                <div class="input-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">Work or Personal Email</label>
+                    <input type="email" id="email" placeholder="name@company.com" required>
+                </div>
+
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="age">Your Age</label>
+                        <input type="number" id="age" placeholder="28" required min="1" max="120">
+                    </div>
+                    <div class="input-group">
+                        <label for="department">Your Domain</label>
+                        <select id="department" required>
+                            <option value="" disabled selected>Select Domain</option>
+                            <option value="tech">Technology</option>
+                            <option value="data">Data & Analytics</option>
+                            <option value="business">Business & Finance</option>
+                            <option value="leadership">Leadership & Management</option>
+                            <option value="design">Product & Design</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-bottom: 2rem;">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem;">Min. 8 characters with
+                        letters and numbers</p>
+                </div>
+
+                <button type="submit" class="cta-button" id="submitBtn">
+                    <span id="btnText">Create Free Account</span>
+                </button>
+
+                <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem;">
+                    By signing up you agree to our <a href="#" style="color: var(--primary); font-weight: 600;">Terms of
+                        Service</a> and <a href="#" style="color: var(--primary); font-weight: 600;">Privacy Policy</a>.
+                </p>
+            </form>
+
+            <div id="result" class="result-message"></div>
+        </div>
+    </main>
+
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>

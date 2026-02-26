@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Player | EduVibe</title>
+    <meta name="description" content="Watch your EduVibe certification lesson with the interactive video player.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ─── LEARN PAGE LAYOUT ──────────────────────────── */
+        .learn-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr 320px;
+            height: calc(100vh - 81px);
+            overflow: hidden;
+        }
+
+        /* ─── SIDEBAR ────────────────────────────────────── */
+        .learn-sidebar {
+            background: var(--bg-darker);
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .learn-sidebar-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--primary);
+            color: white;
+        }
+
+        .learn-sidebar-header h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .learn-sidebar-header p {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .module-list {
+            overflow-y: auto;
+            flex: 1;
+            padding: 0.75rem 0;
+        }
+
+        .module-section {
+            padding: 0.75rem 1.5rem 0.25rem;
+        }
+
+        .module-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 1.5rem;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .lesson-item:hover {
+            background: var(--bg-dark);
+            border-left-color: var(--glass-border);
+        }
+
+        .lesson-item.active {
+            background: rgba(10, 37, 64, 0.06);
+            border-left-color: var(--primary);
+        }
+
+        .lesson-item .lesson-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            flex-shrink: 0;
+            background: var(--glass-border);
+            color: var(--text-muted);
+        }
+
+        .lesson-item.done .lesson-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lesson-item.active .lesson-icon {
+            background: var(--accent);
+            color: white;
+        }
+
+        .lesson-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .lesson-meta p {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lesson-meta span {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* ─── CENTRAL VIDEO AREA ─────────────────────────── */
+        .learn-center {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #0A0E1A;
+        }
+
+        /* Video Container */
+        .video-wrapper {
+            position: relative;
+            background: #000;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+        }
+
+        #mainVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            max-height: calc(100vh - 81px - 130px);
+            display: block;
+        }
+
+        /* Custom Video Controls */
+        .video-controls {
+            background: var(--primary);
+            padding: 0.9rem 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .progress-container {
+            position: relative;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 0.9rem;
+            transition: height 0.15s;
+        }
+
+        .progress-container:hover {
+            height: 7px;
+        }
+
+        #videoProgress {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.1s linear;
+            pointer-events: none;
+        }
+
+        .progress-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            left: 0%;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .progress-container:hover .progress-thumb {
+            opacity: 1;
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .ctrl-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0.25rem;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .ctrl-btn:hover {
+            color: white;
+        }
+
+        .ctrl-btn.active {
+            color: var(--accent);
+        }
+
+        .time-display {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .volume-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .volume-slider {
+            -webkit-appearance: none;
+            width: 70px;
+            height: 3px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.25);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+
+        .speed-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+
+        .speed-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .ctrl-spacer {
+            flex: 1;
+        }
+
+        /* Lesson Title Bar */
+        .lesson-title-bar {
+            padding: 0.75rem 1.5rem;
+            background: #0d1526;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-shrink: 0;
+        }
+
+        .lesson-title-bar h4 {
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .lesson-badge {
+            background: rgba(197, 160, 89, 0.2);
+            color: var(--accent);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        /* ─── RIGHT PANEL ─────────────────────────────────── */
+        .learn-panel {
+            background: var(--bg-darker);
+            border-left: 1px solid var(--glass-border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--glass-border);
+            flex-shrink: 0;
+        }
+
+        .panel-tab {
+            flex: 1;
+            padding: 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: inherit;
+        }
+
+        .panel-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .panel-tab:hover {
+            color: var(--primary);
+        }
+
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+            display: none;
+        }
+
+        .panel-body.active {
+            display: block;
+        }
+
+        /* Notes */
+        .notes-area {
+            width: 100%;
+            min-height: 160px;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            padding: 0.9rem;
+            font-family: inherit;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            resize: vertical;
+            background: var(--bg-dark);
+            line-height: 1.6;
+            outline: none;
+        }
+
+        .notes-area:focus {
+            border-color: var(--primary);
+        }
+
+        .note-card {
+            background: var(--bg-dark);
+            border-left: 3px solid var(--accent);
+            padding: 0.75rem 1rem;
+            border-radius: 0 4px 4px 0;
+            margin-bottom: 0.75rem;
+        }
+
+        .note-card .note-time {
+            font-size: 0.72rem;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .note-card p {
+            font-size: 0.83rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Resources */
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: border-color 0.2s;
+        }
+
+        .resource-item:hover {
+            border-color: var(--primary);
+        }
+
+        .resource-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .resource-info p {
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .resource-info span {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* ─── AUDIO PLAYER ─────────────────────────────────── */
+        .audio-player-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .audio-player-top {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .audio-art {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .audio-info p {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .audio-info span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .audio-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .audio-ctrl-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 1.1rem;
+            padding: 0.25rem;
+            transition: color 0.2s;
+            display: flex;
+        }
+
+        .audio-ctrl-btn:hover {
+            color: var(--accent);
+        }
+
+        .audio-progress-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .audio-seek {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 3px;
+            background: var(--glass-border);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .audio-seek::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .audio-times {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Waveform visualization */
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 32px;
+            margin-bottom: 0.5rem;
+        }
+
+        .wave-bar {
+            width: 3px;
+            border-radius: 2px;
+            background: var(--glass-border);
+            transition: background 0.2s;
+            animation: wave-idle 1.5s ease-in-out infinite alternate;
+        }
+
+        .wave-bar.played {
+            background: var(--primary);
+        }
+
+        @keyframes wave-idle {
+            from {
+                transform: scaleY(1);
+            }
+
+            to {
+                transform: scaleY(0.4);
+            }
+        }
+
+        .playing .wave-bar.played {
+            animation: wave-play 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes wave-play {
+            from {
+                transform: scaleY(0.3);
+            }
+
+            to {
+                transform: scaleY(1);
+            }
+        }
+
+        /* Quiz */
+        .quiz-q {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--glass-border);
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--primary);
+            background: rgba(10, 37, 64, 0.04);
+        }
+
+        .quiz-option.correct {
+            border-color: #16a34a;
+            background: rgba(22, 163, 74, 0.08);
+        }
+
+        .quiz-option.wrong {
+            border-color: #dc2626;
+            background: rgba(220, 38, 38, 0.08);
+        }
+
+        .quiz-dot {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--glass-border);
+            border-radius: 50%;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .quiz-option:hover .quiz-dot {
+            border-color: var(--primary);
+        }
+
+        .quiz-option.correct .quiz-dot {
+            background: #16a34a;
+            border-color: #16a34a;
+        }
+
+        .quiz-option.wrong .quiz-dot {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+
+        .quiz-option label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .quiz-option.correct label {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .quiz-option.wrong label {
+            color: #dc2626;
+        }
+
+        .quiz-submit {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .quiz-submit:hover {
+            background: var(--primary-hover);
+        }
+
+        .quiz-result {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: none;
+        }
+
+        .quiz-result.show {
+            display: block;
+        }
+
+        .quiz-result.pass {
+            background: rgba(22, 163, 74, 0.1);
+            color: #16a34a;
+        }
+
+        .quiz-result.fail {
+            background: rgba(220, 38, 38, 0.1);
+            color: #dc2626;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" style="height: 81px;">
+        <a href="index.html" class="nav-logo">EduVibe</a>
+        <div class="nav-links" style="flex: 1; padding-left: 3rem;">
+            <span style="color: var(--text-muted); font-size: 0.85rem;">AI & Machine Learning Professional</span>
+            <span style="color: var(--glass-border);">›</span>
+            <span style="color: var(--primary); font-weight: 600; font-size: 0.85rem;">Module 8: Neural
+                Architectures</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
+                <span>Progress:</span>
+                <div style="width: 100px; height: 5px; background: var(--glass-border); border-radius: 4px;">
+                    <div style="width: 65%; height: 100%; background: var(--primary); border-radius: 4px;"></div>
+                </div>
+                <span style="color: var(--primary); font-weight: 700;">65%</span>
+            </div>
+            <a href="dashboard.html" class="nav-cta" style="font-size: 0.85rem; padding: 0.6rem 1.25rem;">←
+                Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="learn-layout">
+
+        <!-- LEFT SIDEBAR: Modules -->
+        <aside class="learn-sidebar">
+            <div class="learn-sidebar-header">
+                <h3>AI & ML Professional</h3>
+                <p>8 of 12 modules complete</p>
+                <!-- Mini progress bar -->
+                <div style="height: 3px; background: rgba(255,255,255,0.15); border-radius: 3px; margin-top: 0.75rem;">
+                    <div style="width: 65%; height: 100%; background: var(--accent); border-radius: 3px;"></div>
+                </div>
+            </div>
+            <div class="module-list">
+                <div class="module-section">
+                    <div class="module-section-title">Module 1 – Foundations</div>
+                    <div class="lesson-item done" onclick="switchLesson(this,'Intro to Machine Learning','8:24')">
+                        <div class="lesson-icon">✓</div>
+                        <div class="lesson-meta">
+                            <p>Intro to Machine Learning</p><span>▶ 8:24</span>
+                        </div>
+                    </div>
+                    <div class="lesson-item done" onclick="switchLesson(this,'Data Pre-processing','12:10')">
+                        <div class="lesson-icon">✓</div>
+                        <div class="lesson-meta">
+                            <p>Data Pre-processing</p><span>▶ 12:10</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-section">
+                    <div class="module-section-title">Module 2 – Supervised Learning</div>
+                    <div class="lesson-item done" onclick="switchLesson(this,'Linear Regression Deep Dive','15:33')">
+                        <div class="lesson-icon">✓</div>
+                        <div class="lesson-meta">
+                            <p>Linear Regression Deep Dive</p><span>▶ 15:33</span>
+                        </div>
+                    </div>
+                    <div class="lesson-item done" onclick="switchLesson(this,'Classification Algorithms','18:07')">
+                        <div class="lesson-icon">✓</div>
+                        <div class="lesson-meta">
+                            <p>Classification Algorithms</p><span>▶ 18:07</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-section">
+                    <div class="module-section-title">Module 8 – Neural Networks</div>
+                    <div class="lesson-item done" onclick="switchLesson(this,'Perceptrons & Activation','10:50')">
+                        <div class="lesson-icon">✓</div>
+                        <div class="lesson-meta">
+                            <p>Perceptrons & Activation</p><span>▶ 10:50</span>
+                        </div>
+                    </div>
+                    <div class="lesson-item active" onclick="switchLesson(this,'Transformer Architectures','22:18')">
+                        <div class="lesson-icon">▶</div>
+                        <div class="lesson-meta">
+                            <p>Transformer Architectures</p><span>▶ 22:18 · Now Playing</span>
+                        </div>
+                    </div>
+                    <div class="lesson-item" onclick="switchLesson(this,'Attention Mechanisms','19:44')">
+                        <div class="lesson-icon">9</div>
+                        <div class="lesson-meta">
+                            <p>Attention Mechanisms</p><span>▶ 19:44</span>
+                        </div>
+                    </div>
+                    <div class="lesson-item" onclick="switchLesson(this,'Fine-Tuning LLMs','25:02')">
+                        <div class="lesson-icon">10</div>
+                        <div class="lesson-meta">
+                            <p>Fine-Tuning LLMs</p><span>▶ 25:02</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="module-section">
+                    <div class="module-section-title">Module 9 – Model Deployment</div>
+                    <div class="lesson-item" onclick="switchLesson(this,'MLOps Fundamentals','14:30')">
+                        <div class="lesson-icon">11</div>
+                        <div class="lesson-meta">
+                            <p>MLOps Fundamentals</p><span>▶ 14:30 · Locked</span>
+                        </div>
+                    </div>
+                    <div class="lesson-item" onclick="switchLesson(this,'Serving with FastAPI','21:15')">
+                        <div class="lesson-icon">12</div>
+                        <div class="lesson-meta">
+                            <p>Serving with FastAPI</p><span>▶ 21:15 · Locked</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTER: Video Player -->
+        <div class="learn-center">
+            <div class="lesson-title-bar">
+                <h4 id="lessonTitle">Transformer Architectures — How Self-Attention Changed Everything</h4>
+                <span class="lesson-badge">HD</span>
+                <span class="lesson-badge" style="background: rgba(10,37,64,0.1); color: var(--primary);">22:18</span>
+            </div>
+            <div class="video-wrapper">
+                <video id="mainVideo" preload="metadata" poster="https://picsum.photos/seed/eduvibe/1280/720">
+                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                        type="video/mp4">
+                    Your browser does not support HTML5 video.
+                </video>
+                <!-- Big play overlay -->
+                <div id="playOverlay"
+                    style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; cursor:pointer;"
+                    onclick="togglePlay()">
+                    <div id="overlayBtn"
+                        style="width:70px; height:70px; border-radius:50%; background:rgba(10,37,64,0.85); display:flex; align-items:center; justify-content:center; transition:transform 0.2s; backdrop-filter:blur(8px);">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Video Controls -->
+            <div class="video-controls">
+                <div class="progress-container" id="progressBar" onclick="seekVideo(event)">
+                    <div id="videoProgress"></div>
+                    <div class="progress-thumb" id="progressThumb"></div>
+                </div>
+                <div class="controls-row">
+                    <button class="ctrl-btn" onclick="togglePlay()" id="playBtn" title="Play / Pause">
+                        <svg id="playIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </button>
+                    <button class="ctrl-btn" onclick="skipTime(-10)" title="Rewind 10s">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" />
+                            <text x="8.5" y="15" font-size="6" fill="currentColor" font-family="sans-serif">10</text>
+                        </svg>
+                    </button>
+                    <button class="ctrl-btn" onclick="skipTime(10)" title="Forward 10s">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6v4l5-5-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8h-2z" />
+                            <text x="8.5" y="15" font-size="6" fill="currentColor" font-family="sans-serif">10</text>
+                        </svg>
+                    </button>
+                    <span class="time-display"><span id="currentTime">0:00</span> / <span
+                            id="totalTime">--:--</span></span>
+                    <div class="ctrl-spacer"></div>
+                    <div class="volume-group">
+                        <button class="ctrl-btn" onclick="toggleMute()" id="muteBtn" title="Mute">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
+                            </svg>
+                        </button>
+                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.05"
+                            value="0.8" oninput="setVolume(this.value)">
+                    </div>
+                    <button class="speed-btn" onclick="cycleSpeed()" id="speedBtn">1x</button>
+                    <button class="ctrl-btn" onclick="toggleFullscreen()" title="Fullscreen">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="learn-panel">
+            <div class="panel-tabs">
+                <button class="panel-tab active" onclick="switchTab('notes', this)">📝 Notes</button>
+                <button class="panel-tab" onclick="switchTab('audio', this)">🎧 Audio</button>
+                <button class="panel-tab" onclick="switchTab('resources', this)">📁 Files</button>
+                <button class="panel-tab" onclick="switchTab('quiz', this)">🧠 Quiz</button>
+            </div>
+
+            <!-- NOTES TAB -->
+            <div class="panel-body active" id="tab-notes">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <h4 style="font-size: 0.9rem; color: var(--primary);">Lesson Notes</h4>
+                    <button onclick="saveNote()"
+                        style="background: var(--primary); color: white; border: none; padding: 0.35rem 0.9rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600; cursor: pointer; font-family: inherit;">Save
+                        at Timestamp</button>
+                </div>
+                <textarea class="notes-area" id="noteInput"
+                    placeholder="Type your notes here... Click 'Save at Timestamp' to anchor them at the current video time."></textarea>
+
+                <div style="margin-top: 1.25rem;">
+                    <h5
+                        style="font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.75rem;">
+                        Saved Notes</h5>
+                    <div id="savedNotes">
+                        <div class="note-card">
+                            <div class="note-time">⏱ 2:45</div>
+                            <p>Self-attention computes relationships between all positions in a sequence simultaneously
+                                — unlike RNNs which process sequentially.</p>
+                        </div>
+                        <div class="note-card">
+                            <div class="note-time">⏱ 7:12</div>
+                            <p>Q, K, V matrices: Query, Key, Value — the core of the attention mechanism.
+                                Attention(Q,K,V) = softmax(QK^T / √d_k) * V</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUDIO TAB -->
+            <div class="panel-body" id="tab-audio">
+                <h4 style="font-size: 0.9rem; color: var(--primary); margin-bottom: 1rem;">Audio Supplements</h4>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">Expert interviews and
+                    deep-dive audio discussions for this module.</p>
+
+                <!-- Audio Player 1 -->
+                <div class="audio-player-card" id="audioCard1">
+                    <div class="audio-player-top">
+                        <div class="audio-art">🎙</div>
+                        <div class="audio-info">
+                            <p>Attention is All You Need — Paper Review</p>
+                            <span>Dr. Amir Hassan · 24 min</span>
+                        </div>
+                    </div>
+                    <div class="waveform" id="waveform1">
+                        <!-- Bars generated by JS -->
+                    </div>
+                    <div class="audio-controls">
+                        <button class="audio-ctrl-btn" onclick="skipAudio('audio1', -15)" title="Rewind 15s">⏮</button>
+                        <button class="audio-ctrl-btn" id="audioPlayBtn1"
+                            onclick="toggleAudio('audio1','audioPlayBtn1','waveform1')" title="Play">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </button>
+                        <button class="audio-ctrl-btn" onclick="skipAudio('audio1', 15)" title="Forward 15s">⏭</button>
+                        <div class="audio-progress-wrap">
+                            <input type="range" class="audio-seek" id="audioSeek1" min="0" value="0" step="0.1"
+                                oninput="audioSeekTo('audio1', this.value)">
+                            <div class="audio-times">
+                                <span id="audioCurrentTime1">0:00</span>
+                                <span id="audioDuration1">--:--</span>
+                            </div>
+                        </div>
+                    </div>
+                    <audio id="audio1" onended="audioEnded('audioPlayBtn1','waveform1')"
+                        ontimeupdate="updateAudioTime('audio1','audioSeek1','audioCurrentTime1')"
+                        onloadedmetadata="setAudioDuration('audio1','audioDuration1','audioSeek1')">
+                        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+
+                <!-- Audio Player 2 -->
+                <div class="audio-player-card" id="audioCard2">
+                    <div class="audio-player-top">
+                        <div class="audio-art" style="background: var(--accent);">🎓</div>
+                        <div class="audio-info">
+                            <p>GPT-4 vs Gemini — Architecture Comparison</p>
+                            <span>Industry Roundtable · 18 min</span>
+                        </div>
+                    </div>
+                    <div class="waveform" id="waveform2"></div>
+                    <div class="audio-controls">
+                        <button class="audio-ctrl-btn" onclick="skipAudio('audio2', -15)">⏮</button>
+                        <button class="audio-ctrl-btn" id="audioPlayBtn2"
+                            onclick="toggleAudio('audio2','audioPlayBtn2','waveform2')">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </button>
+                        <button class="audio-ctrl-btn" onclick="skipAudio('audio2', 15)">⏭</button>
+                        <div class="audio-progress-wrap">
+                            <input type="range" class="audio-seek" id="audioSeek2" min="0" value="0" step="0.1"
+                                oninput="audioSeekTo('audio2', this.value)">
+                            <div class="audio-times">
+                                <span id="audioCurrentTime2">0:00</span>
+                                <span id="audioDuration2">--:--</span>
+                            </div>
+                        </div>
+                    </div>
+                    <audio id="audio2" onended="audioEnded('audioPlayBtn2','waveform2')"
+                        ontimeupdate="updateAudioTime('audio2','audioSeek2','audioCurrentTime2')"
+                        onloadedmetadata="setAudioDuration('audio2','audioDuration2','audioSeek2')">
+                        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+                    </audio>
+                </div>
+            </div>
+
+            <!-- RESOURCES TAB -->
+            <div class="panel-body" id="tab-resources">
+                <h4 style="font-size: 0.9rem; color: var(--primary); margin-bottom: 1rem;">Lesson Resources</h4>
+                <a class="resource-item" href="https://arxiv.org/abs/1706.03762" target="_blank">
+                    <div class="resource-icon">📄</div>
+                    <div class="resource-info">
+                        <p>Attention is All You Need (Paper)</p>
+                        <span>PDF · arxiv.org · Original Research</span>
+                    </div>
+                </a>
+                <a class="resource-item" href="#" download>
+                    <div class="resource-icon" style="background: var(--accent);">📊</div>
+                    <div class="resource-info">
+                        <p>Transformer Architecture Slides</p>
+                        <span>PPTX · 4.2 MB · Module 8</span>
+                    </div>
+                </a>
+                <a class="resource-item" href="#" download>
+                    <div class="resource-icon" style="background: #16a34a;">💻</div>
+                    <div class="resource-info">
+                        <p>Hands-on Notebook (Colab)</p>
+                        <span>IPYNB · Build a mini Transformer from scratch</span>
+                    </div>
+                </a>
+                <a class="resource-item" href="#" download>
+                    <div class="resource-icon" style="background: #7c3aed;">📝</div>
+                    <div class="resource-info">
+                        <p>Module 8 Cheat Sheet</p>
+                        <span>PDF · 1.1 MB · Key formulas & diagrams</span>
+                    </div>
+                </a>
+                <a class="resource-item" href="#" download>
+                    <div class="resource-icon" style="background: #0ea5e9;">🗂</div>
+                    <div class="resource-info">
+                        <p>Practice Dataset (CSV)</p>
+                        <span>CSV · 2.8 MB · tokenized Wikipedia snippets</span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- QUIZ TAB -->
+            <div class="panel-body" id="tab-quiz">
+                <h4 style="font-size: 0.9rem; color: var(--primary); margin-bottom: 0.25rem;">Knowledge Check</h4>
+                <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.25rem;">Answer all 3 questions
+                    to unlock the next lesson.</p>
+
+                <!-- Q1 -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div class="quiz-q">1. What does the "Q" in the QKV attention mechanism stand for?</div>
+                    <div class="quiz-option" data-q="1" data-correct="false" onclick="selectQuizOption(this,1)">
+                        <div class="quiz-dot"></div><label>Quantization</label>
+                    </div>
+                    <div class="quiz-option" data-q="1" data-correct="true" onclick="selectQuizOption(this,1)">
+                        <div class="quiz-dot"></div><label>Query</label>
+                    </div>
+                    <div class="quiz-option" data-q="1" data-correct="false" onclick="selectQuizOption(this,1)">
+                        <div class="quiz-dot"></div><label>Quotient</label>
+                    </div>
+                </div>
+
+                <!-- Q2 -->
+                <div style="margin-bottom: 1.5rem;">
+                    <div class="quiz-q">2. Which architecture replaced RNNs for most NLP tasks after 2017?</div>
+                    <div class="quiz-option" data-q="2" data-correct="false" onclick="selectQuizOption(this,2)">
+                        <div class="quiz-dot"></div><label>Convolutional Networks (CNN)</label>
+                    </div>
+                    <div class="quiz-option" data-q="2" data-correct="false" onclick="selectQuizOption(this,2)">
+                        <div class="quiz-dot"></div><label>Autoencoders</label>
+                    </div>
+                    <div class="quiz-option" data-q="2" data-correct="true" onclick="selectQuizOption(this,2)">
+                        <div class="quiz-dot"></div><label>Transformers</label>
+                    </div>
+                </div>
+
+                <!-- Q3 -->
+                <div style="margin-bottom: 1rem;">
+                    <div class="quiz-q">3. What does the √d_k scaling factor prevent in attention?</div>
+                    <div class="quiz-option" data-q="3" data-correct="true" onclick="selectQuizOption(this,3)">
+                        <div class="quiz-dot"></div><label>Vanishing gradients from extremely small dot products</label>
+                    </div>
+                    <div class="quiz-option" data-q="3" data-correct="false" onclick="selectQuizOption(this,3)">
+                        <div class="quiz-dot"></div><label>Overfitting the training dataset</label>
+                    </div>
+                    <div class="quiz-option" data-q="3" data-correct="false" onclick="selectQuizOption(this,3)">
+                        <div class="quiz-dot"></div><label>Tokenization errors</label>
+                    </div>
+                </div>
+
+                <button class="quiz-submit" onclick="submitQuiz()">Submit Answers</button>
+                <div class="quiz-result" id="quizResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ─── VIDEO PLAYER ─────────────────────────────── */
+        const video = document.getElementById('mainVideo');
+        const playIcon = document.getElementById('playIcon');
+        const playOverlay = document.getElementById('playOverlay');
+        const speeds = [0.5, 0.75, 1, 1.25, 1.5, 2];
+        let speedIndex = 2;
+        let quizAnswers = {};
+
+        function formatTime(s) {
+            if (isNaN(s)) return '--:--';
+            const m = Math.floor(s / 60);
+            const sec = Math.floor(s % 60).toString().padStart(2, '0');
+            return `${m}:${sec}`;
+        }
+
+        function togglePlay() {
+            if (video.paused) {
+                video.play();
+                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+                playOverlay.style.opacity = '0';
+                playOverlay.style.transition = 'opacity 0.3s';
+            } else {
+                video.pause();
+                playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                playOverlay.style.opacity = '1';
+            }
+        }
+
+        video.addEventListener('timeupdate', () => {
+            const perc = (video.currentTime / video.duration) * 100 || 0;
+            document.getElementById('videoProgress').style.width = perc + '%';
+            document.getElementById('progressThumb').style.left = perc + '%';
+            document.getElementById('currentTime').textContent = formatTime(video.currentTime);
+        });
+
+        video.addEventListener('loadedmetadata', () => {
+            document.getElementById('totalTime').textContent = formatTime(video.duration);
+        });
+
+        function seekVideo(e) {
+            const bar = document.getElementById('progressBar');
+            const rect = bar.getBoundingClientRect();
+            const perc = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            video.currentTime = perc * video.duration;
+        }
+
+        function skipTime(s) {
+            video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + s));
+        }
+
+        function toggleMute() {
+            video.muted = !video.muted;
+            document.getElementById('volumeSlider').value = video.muted ? 0 : video.volume;
+        }
+
+        function setVolume(val) {
+            video.volume = val;
+            video.muted = (val == 0);
+        }
+
+        function cycleSpeed() {
+            speedIndex = (speedIndex + 1) % speeds.length;
+            video.playbackRate = speeds[speedIndex];
+            document.getElementById('speedBtn').textContent = speeds[speedIndex] + 'x';
+        }
+
+        function toggleFullscreen() {
+            const wrapper = video.closest('.video-wrapper');
+            if (!document.fullscreenElement) {
+                wrapper.requestFullscreen && wrapper.requestFullscreen();
+            } else {
+                document.exitFullscreen && document.exitFullscreen();
+            }
+        }
+
+        function switchLesson(el, name, dur) {
+            document.querySelectorAll('.lesson-item').forEach(l => l.classList.remove('active'));
+            el.classList.add('active');
+            el.querySelector('.lesson-icon').textContent = '▶';
+            document.getElementById('lessonTitle').textContent = name + ' — EduVibe Certification Lesson';
+            document.querySelector('.lesson-badge:last-child').textContent = dur;
+            // Reset video
+            video.currentTime = 0;
+            playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+            playOverlay.style.opacity = '1';
+        }
+
+        /* ─── PANEL TABS ─────────────────────────────────── */
+        function switchTab(name, btn) {
+            document.querySelectorAll('.panel-body').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.panel-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        /* ─── NOTES ─────────────────────────────────────── */
+        function saveNote() {
+            const input = document.getElementById('noteInput');
+            const text = input.value.trim();
+            if (!text) return;
+            const t = formatTime(video.currentTime);
+            const card = document.createElement('div');
+            card.className = 'note-card';
+            card.innerHTML = `<div class="note-time">⏱ ${t}</div><p>${text}</p>`;
+            document.getElementById('savedNotes').prepend(card);
+            input.value = '';
+        }
+
+        /* ─── AUDIO PLAYERS ─────────────────────────────── */
+        function buildWaveform(id) {
+            const container = document.getElementById(id);
+            const heights = [30, 50, 80, 60, 90, 40, 70, 55, 85, 45, 65, 75, 50, 90, 30, 60, 80, 40, 70, 55, 60, 85, 45, 30, 70, 90, 50, 65, 80, 40, 55, 75, 30, 60, 85, 45, 70, 50, 90, 30, 65, 40, 80, 55, 70, 45, 60, 90, 30, 75];
+            heights.forEach((h, i) => {
+                const bar = document.createElement('div');
+                bar.className = 'wave-bar';
+                bar.style.height = h + '%';
+                bar.style.animationDelay = (i * 0.05) + 's';
+                container.appendChild(bar);
+            });
+        }
+        buildWaveform('waveform1');
+        buildWaveform('waveform2');
+
+        let currentAudio = null;
+        let currentPlayBtn = null;
+        let currentWave = null;
+
+        const playIconSVG = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+        const pauseIconSVG = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+
+        function toggleAudio(audioId, btnId, waveId) {
+            const audio = document.getElementById(audioId);
+            const btn = document.getElementById(btnId);
+            const card = audio.closest('.audio-player-card');
+
+            if (currentAudio && currentAudio !== audio) {
+                currentAudio.pause();
+                currentPlayBtn.innerHTML = playIconSVG;
+                currentWave.classList.remove('playing');
+            }
+
+            if (audio.paused) {
+                audio.play();
+                btn.innerHTML = pauseIconSVG;
+                card.querySelector('.waveform').classList.add('playing');
+                currentAudio = audio;
+                currentPlayBtn = btn;
+                currentWave = card.querySelector('.waveform');
+            } else {
+                audio.pause();
+                btn.innerHTML = playIconSVG;
+                card.querySelector('.waveform').classList.remove('playing');
+            }
+        }
+
+        function skipAudio(audioId, seconds) {
+            const audio = document.getElementById(audioId);
+            audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + seconds));
+        }
+
+        function audioSeekTo(audioId, val) {
+            document.getElementById(audioId).currentTime = val;
+        }
+
+        function updateAudioTime(audioId, seekId, timeId) {
+            const audio = document.getElementById(audioId);
+            const seek = document.getElementById(seekId);
+            document.getElementById(timeId).textContent = formatTime(audio.currentTime);
+            seek.value = audio.currentTime;
+
+            // Update waveform played bars
+            const card = audio.closest('.audio-player-card');
+            const bars = card.querySelectorAll('.wave-bar');
+            const perc = audio.currentTime / audio.duration;
+            bars.forEach((bar, i) => {
+                bar.classList.toggle('played', i < bars.length * perc);
+            });
+        }
+
+        function setAudioDuration(audioId, durationId, seekId) {
+            const audio = document.getElementById(audioId);
+            document.getElementById(durationId).textContent = formatTime(audio.duration);
+            document.getElementById(seekId).max = audio.duration;
+        }
+
+        function audioEnded(btnId, waveId) {
+            document.getElementById(btnId).innerHTML = playIconSVG;
+            document.getElementById(waveId).classList.remove('playing');
+        }
+
+        /* ─── QUIZ ──────────────────────────────────────── */
+        function selectQuizOption(el, qNum) {
+            document.querySelectorAll(`[data-q="${qNum}"]`).forEach(o => {
+                o.classList.remove('correct', 'wrong');
+            });
+            quizAnswers[qNum] = (el.dataset.correct === 'true');
+        }
+
+        function submitQuiz() {
+            const result = document.getElementById('quizResult');
+
+            if (Object.keys(quizAnswers).length < 3) {
+                result.className = 'quiz-result show fail';
+                result.textContent = '⚠ Please answer all 3 questions before submitting.';
+                return;
+            }
+
+            // Reveal answers
+            document.querySelectorAll('.quiz-option').forEach(opt => {
+                if (opt.dataset.correct === 'true') opt.classList.add('correct');
+            });
+
+            const correct = Object.values(quizAnswers).filter(Boolean).length;
+            if (correct === 3) {
+                result.className = 'quiz-result show pass';
+                result.textContent = '🎉 Perfect score! Lesson complete. Next lesson is now unlocked.';
+            } else {
+                result.className = 'quiz-result show fail';
+                result.textContent = `You got ${correct}/3 correct. Review the green answers and re-watch the relevant segments.`;
+            }
+        }
+    </script>
+</body>
+
+</html>

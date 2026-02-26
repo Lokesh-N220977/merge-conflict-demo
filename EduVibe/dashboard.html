@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard | EduVibe</title>
+    <meta name="description"
+        content="Track your certification progress, upcoming sessions, and career milestones on EduVibe.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Audio widget micro-styles */
+        .audio-seek {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 3px;
+            background: var(--glass-border);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+            margin-bottom: .35rem;
+        }
+
+        .audio-seek::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+        }
+
+        .audio-ctrl {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 1.1rem;
+            padding: .2rem;
+            display: flex;
+            transition: color .2s;
+        }
+
+        .audio-ctrl:hover {
+            color: var(--accent);
+        }
+
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            height: 28px;
+            margin-bottom: .6rem;
+        }
+
+        .wave-bar {
+            width: 3px;
+            border-radius: 2px;
+            background: var(--glass-border);
+        }
+
+        .wave-bar.played {
+            background: var(--primary);
+        }
+
+        .playing .wave-bar.played {
+            animation: wave-play .5s ease-in-out infinite alternate;
+        }
+
+        @keyframes wave-play {
+            from {
+                transform: scaleY(0.3)
+            }
+
+            to {
+                transform: scaleY(1)
+            }
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .4
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">EduVibe</a>
+        <div class="nav-links">
+            <a href="index.html">Programs</a>
+            <a href="courses.html">Certifications</a>
+            <a href="dashboard.html" class="active">My Dashboard</a>
+        </div>
+        <a href="#" id="logoutBtn" class="nav-cta"
+            style="background: transparent; border: 1px solid var(--primary); color: var(--primary);">Logout</a>
+    </nav>
+
+    <div class="background-blobs"></div>
+
+    <main class="page-content section">
+        <!-- Header -->
+        <div
+            style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:40px; flex-wrap:wrap; gap:1rem;">
+            <div>
+                <h1 id="welcomeMessage" style="font-size:2.5rem; color:var(--primary);">Welcome back, Professional</h1>
+                <p style="color:var(--text-muted); margin-top:.5rem;">Here's your certification progress at a glance.
+                </p>
+            </div>
+            <div
+                style="background:var(--bg-darker); border:1px solid var(--glass-border); padding:12px 24px; border-radius:4px; text-align:center;">
+                <div style="font-weight:800; font-size:1.5rem; color:var(--primary);">Pro</div>
+                <div
+                    style="font-size:.8rem; color:var(--accent); font-weight:600; text-transform:uppercase; letter-spacing:1px;">
+                    Member Tier</div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid">
+            <!-- Active Certification -->
+            <div class="feature-card" style="grid-column:span 2;">
+                <div
+                    style="display:flex; justify-content:space-between; border-bottom:1px solid var(--glass-border); padding-bottom:1rem; margin-bottom:1.5rem; flex-wrap:wrap; gap:.5rem;">
+                    <h3 style="margin:0; color:var(--primary);">Active Certification</h3>
+                    <span
+                        style="background:rgba(197,160,89,0.12); color:var(--accent); padding:4px 12px; border-radius:4px; font-size:.85rem; font-weight:700;">In
+                        Progress</span>
+                </div>
+                <h4 style="color:var(--primary); margin-bottom:.5rem;">AI & Machine Learning Professional</h4>
+                <p style="color:var(--text-muted); font-size:.9rem; margin-bottom:1.5rem;">Module 8 of 12 — Neural
+                    Architecture &amp; Transformers</p>
+                <div
+                    style="width:100%; height:8px; background:var(--glass-border); border-radius:4px; margin-bottom:.5rem;">
+                    <div style="width:65%; height:100%; background:var(--primary); border-radius:4px;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                    <span style="font-size:.85rem; color:var(--text-muted);">65% Complete &bull; Est. completion: March
+                        14</span>
+                    <div style="display:flex; gap:.75rem;">
+                        <a href="learn.html" class="cta-button"
+                            style="width:auto; padding:.65rem 1.5rem; font-size:.9rem; text-decoration:none; display:inline-flex; align-items:center; gap:.5rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                            Continue Lesson
+                        </a>
+                        <a href="learn.html#tab-audio" class="nav-cta"
+                            style="font-size:.9rem; padding:.65rem 1.25rem; background:transparent; color:var(--primary); border:1px solid var(--primary); box-shadow:none; text-decoration:none;">
+                            🎧 Audio Notes
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Session -->
+            <div class="feature-card">
+                <h3 style="color:var(--primary); margin-bottom:1.5rem;">Next Live Session</h3>
+                <div
+                    style="background:var(--bg-dark); padding:1.25rem; border-radius:4px; border-left:4px solid var(--accent); margin-bottom:1rem;">
+                    <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.25rem;">
+                        <span class="live-dot"></span>
+                        <p style="font-weight:700; color:var(--primary); font-size:.9rem;">Expert Q&amp;A: LLM
+                            Fine-Tuning</p>
+                    </div>
+                    <p style="color:var(--text-muted); font-size:.82rem;">Tomorrow &middot; 7:00 PM IST &middot; Zoom
+                    </p>
+                    <button onclick="alert('Opening Zoom session...')"
+                        style="margin-top:.75rem; padding:.4rem 1rem; background:var(--primary); color:white; border:none; border-radius:4px; font-size:.78rem; font-weight:700; cursor:pointer; font-family:inherit;">Join
+                        Session →</button>
+                </div>
+                <div
+                    style="background:var(--bg-dark); padding:1.25rem; border-radius:4px; border-left:4px solid var(--glass-border);">
+                    <p style="font-weight:700; color:var(--primary); margin-bottom:.25rem; font-size:.9rem;">Peer Study
+                        Group</p>
+                    <p style="color:var(--text-muted); font-size:.82rem;">Saturday &middot; 10:00 AM IST &middot;
+                        Community Hub</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audio Briefing Widget -->
+        <div style="margin-top:2.5rem;">
+            <h3 style="color:var(--primary); margin-bottom:1.25rem;">🎧 Daily Audio Briefing</h3>
+            <div class="feature-card" style="display:flex; gap:2rem; align-items:center; flex-wrap:wrap;">
+                <div style="flex:1; min-width:280px;">
+                    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+                        <div
+                            style="width:52px; height:52px; border-radius:8px; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0;">
+                            🎙</div>
+                        <div>
+                            <p style="font-weight:700; color:var(--primary);">AI Trends Report — Feb 25, 2026</p>
+                            <span style="font-size:.8rem; color:var(--text-muted);">EduVibe Editorial &middot; 8 min
+                                listen</span>
+                        </div>
+                    </div>
+                    <div class="waveform" id="dashWaveform"></div>
+                    <div style="display:flex; align-items:center; gap:.75rem;">
+                        <button class="audio-ctrl" onclick="skipDashAudio(-15)">⏮</button>
+                        <button class="audio-ctrl" id="dashPlayBtn" onclick="toggleDashAudio()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </button>
+                        <button class="audio-ctrl" onclick="skipDashAudio(15)">⏭</button>
+                        <div style="flex:1; display:flex; flex-direction:column; gap:.3rem;">
+                            <input type="range" class="audio-seek" id="dashAudioSeek" min="0" value="0" step="0.1"
+                                oninput="dashSeekTo(this.value)">
+                            <div
+                                style="display:flex; justify-content:space-between; font-size:.7rem; color:var(--text-muted);">
+                                <span id="dashNow">0:00</span>
+                                <span id="dashTotal">--:--</span>
+                            </div>
+                        </div>
+                        <select id="dashSpeed" onchange="dashAudio.playbackRate = parseFloat(this.value)"
+                            style="border:1px solid var(--glass-border); border-radius:4px; padding:.25rem .5rem; font-size:.78rem; font-family:inherit; color:var(--primary); background:var(--bg-dark); cursor:pointer; outline:none;">
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="min-width:200px;">
+                    <h5
+                        style="font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin-bottom:.75rem;">
+                        Up Next</h5>
+                    <div style="display:flex; flex-direction:column; gap:.6rem;">
+                        <div style="display:flex; align-items:center; gap:.75rem; cursor:pointer; padding:.5rem; border-radius:4px;"
+                            onmouseover="this.style.background='var(--bg-dark)'"
+                            onmouseout="this.style.background='transparent'">
+                            <span style="color:var(--text-muted);">▶</span>
+                            <div>
+                                <p style="font-size:.82rem; font-weight:600; color:var(--primary);">How Mistral 8x7B
+                                    Works</p><span style="font-size:.72rem; color:var(--text-muted);">5 min</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:.75rem; cursor:pointer; padding:.5rem; border-radius:4px;"
+                            onmouseover="this.style.background='var(--bg-dark)'"
+                            onmouseout="this.style.background='transparent'">
+                            <span style="color:var(--text-muted);">▶</span>
+                            <div>
+                                <p style="font-size:.82rem; font-weight:600; color:var(--primary);">RLHF Explained
+                                    Simply</p><span style="font-size:.72rem; color:var(--text-muted);">7 min</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:.75rem; cursor:pointer; padding:.5rem; border-radius:4px;"
+                            onmouseover="this.style.background='var(--bg-dark)'"
+                            onmouseout="this.style.background='transparent'">
+                            <span style="color:var(--text-muted);">▶</span>
+                            <div>
+                                <p style="font-size:.82rem; font-weight:600; color:var(--primary);">Using Vector DBs in
+                                    Production</p><span style="font-size:.72rem; color:var(--text-muted);">9 min</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credentials & Quick Links -->
+        <div style="margin-top:3rem;">
+            <h3 style="color:var(--primary); margin-bottom:1.5rem;">Earned Credentials</h3>
+            <div class="grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="feature-card" style="border-left:4px solid var(--accent);">
+                    <div style="display:flex; gap:1rem; align-items:center;">
+                        <div style="font-size:2rem;">🏅</div>
+                        <div>
+                            <p style="font-weight:700; color:var(--primary); font-size:.95rem;">Python for Data Science
+                            </p>
+                            <p style="color:var(--text-muted); font-size:.8rem;">Completed Jan 2026 &middot; EduVibe
+                                Certified</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card" style="border-left:4px solid var(--accent);">
+                    <div style="display:flex; gap:1rem; align-items:center;">
+                        <div style="font-size:2rem;">🏅</div>
+                        <div>
+                            <p style="font-weight:700; color:var(--primary); font-size:.95rem;">Agile &amp; Scrum
+                                Fundamentals</p>
+                            <p style="color:var(--text-muted); font-size:.8rem;">Completed Nov 2025 &middot; EduVibe
+                                Certified</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card" style="background:var(--bg-dark); cursor:pointer; text-align:center;">
+                    <a href="courses.html" style="text-decoration:none;">
+                        <div style="font-size:2rem; margin-bottom:.5rem;">➕</div>
+                        <p style="font-weight:700; color:var(--primary); font-size:.95rem;">Add a new certification</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div style="margin-top:3rem;">
+            <h3 style="color:var(--primary); margin-bottom:1.5rem;">Quick Access</h3>
+            <div class="grid" style="grid-template-columns:repeat(4,1fr);">
+                <a href="learn.html" class="feature-card"
+                    style="padding:1.5rem; text-align:center; text-decoration:none; display:block;">
+                    <div style="font-size:1.5rem; margin-bottom:.5rem;">🎬</div>
+                    <div style="font-size:.85rem; font-weight:600; color:var(--primary);">Video Lessons</div>
+                </a>
+                <div class="feature-card" style="padding:1.5rem; text-align:center; cursor:pointer;"
+                    onclick="document.getElementById('dashPlayBtn').click()">
+                    <div style="font-size:1.5rem; margin-bottom:.5rem;">🎧</div>
+                    <div style="font-size:.85rem; font-weight:600; color:var(--primary);">Audio Briefings</div>
+                </div>
+                <div class="feature-card" style="padding:1.5rem; text-align:center;">
+                    <div style="font-size:1.5rem; margin-bottom:.5rem;">🎯</div>
+                    <div style="font-size:.85rem; font-weight:600; color:var(--primary);">Career Goals</div>
+                </div>
+                <div class="feature-card" style="padding:1.5rem; text-align:center;">
+                    <div style="font-size:1.5rem; margin-bottom:.5rem;">⚙️</div>
+                    <div style="font-size:.85rem; font-weight:600; color:var(--primary);">Settings</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <audio id="dashAudio" onloadedmetadata="dashMeta()" ontimeupdate="dashUpdate()" onended="dashEnded()">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const dashAudio = document.getElementById('dashAudio');
+        const dashWaveform = document.getElementById('dashWaveform');
+
+        // Build waveform bars
+        const heights = [30, 55, 80, 60, 90, 40, 70, 55, 85, 45, 65, 75, 50, 90, 30, 60, 80, 40, 70, 55, 60, 85, 45, 30, 70, 90, 50, 65, 80, 40, 55, 75, 30, 60, 85, 45, 70, 50, 90, 30, 65, 40, 80];
+        heights.forEach((h, i) => {
+            const bar = document.createElement('div');
+            bar.className = 'wave-bar';
+            bar.style.height = h + '%';
+            bar.style.animationDelay = (i * 0.05) + 's';
+            dashWaveform.appendChild(bar);
+        });
+
+        function fmt(s) {
+            if (isNaN(s)) return '--:--';
+            return Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+        }
+
+        function toggleDashAudio() {
+            const btn = document.getElementById('dashPlayBtn');
+            if (dashAudio.paused) {
+                dashAudio.play();
+                btn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+                dashWaveform.classList.add('playing');
+            } else {
+                dashAudio.pause();
+                btn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+                dashWaveform.classList.remove('playing');
+            }
+        }
+
+        function skipDashAudio(s) {
+            dashAudio.currentTime = Math.max(0, Math.min(dashAudio.duration, dashAudio.currentTime + s));
+        }
+
+        function dashSeekTo(v) { dashAudio.currentTime = v; }
+
+        function dashMeta() {
+            document.getElementById('dashTotal').textContent = fmt(dashAudio.duration);
+            document.getElementById('dashAudioSeek').max = dashAudio.duration;
+        }
+
+        function dashUpdate() {
+            const seek = document.getElementById('dashAudioSeek');
+            seek.value = dashAudio.currentTime;
+            document.getElementById('dashNow').textContent = fmt(dashAudio.currentTime);
+            const bars = dashWaveform.querySelectorAll('.wave-bar');
+            const perc = dashAudio.currentTime / dashAudio.duration;
+            bars.forEach((b, i) => b.classList.toggle('played', i < bars.length * perc));
+        }
+
+        function dashEnded() {
+            document.getElementById('dashPlayBtn').innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+            dashWaveform.classList.remove('playing');
+        }
+
+        // Personalization
+        const name = localStorage.getItem('registeredName');
+        if (name) document.getElementById('welcomeMessage').textContent = `Welcome back, ${name}!`;
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('registeredName');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+
+</html>
