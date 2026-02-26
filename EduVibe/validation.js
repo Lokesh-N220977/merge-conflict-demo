@@ -4,8 +4,7 @@
  * @returns {boolean} - true if valid, false otherwise.
  */
 export const validateAge = (age) => {
-
-    return age >= 18 && age < 30;
+    return age >= 15 && age < 40;
 
 };
 
