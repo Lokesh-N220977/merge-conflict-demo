@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today's Appointments - MedicPulse Doctor</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .doctor-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .doctor-table th,
+        .doctor-table td {
+            text-align: left;
+            padding: 16px 24px;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+        }
+
+        .doctor-table th {
+            background-color: #f8fafc;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .doctor-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .doctor-table tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .patient-info strong {
+            display: block;
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .patient-info small {
+            color: #718096;
+            font-size: 0.8rem;
+        }
+
+        .time-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ebf8ff;
+            color: #2b6cb0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-pending {
+            background-color: #fefcbf;
+            color: #975a16;
+        }
+
+        .status-completed {
+            background-color: #c6f6d5;
+            color: #22543d;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .toolbar-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 42px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #4a5568;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .action-btn-primary {
+            background: var(--primary-color, #0056b3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+        }
+
+        .action-btn-primary:hover {
+            background: #004494;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MedicPulse</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="today-appointments.html" class="active"><i class="fas fa-calendar-day"></i> Today's
+                        Schedule</a></li>
+                <li><a href="schedule.html"><i class="fas fa-calendar-alt"></i> My Calendar</a></li>
+                <li><a href="history.html"><i class="fas fa-history"></i> Patient History</a></li>
+                <li><a href="profile.html"><i class="fas fa-user-md"></i> My Profile</a></li>
+            </ul>
+        </div>
+
+        <div class="main-wrapper">
+            <!-- Header -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="system-name">MedicPulse Doctor Portal</span>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <span class="user-name">Dr. John Doe</span>
+                    </div>
+                    <a href="../login.html" class="logout-btn"
+                        style="margin-left: 20px; padding: 8px 16px; background: #ffebee; color: #c62828; border-radius: 6px; font-weight: 500; border: 1px solid #ffcdd2; display: flex; align-items: center; gap: 8px; transition: 0.2s;"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="content-area">
+                <div class="page-header" style="margin-bottom: 30px;">
+                    <h1>Today's Appointments</h1>
+                    <p>Review and manage your patient consultations for today.</p>
+                </div>
+
+                <!-- Professional Toolbar -->
+                <div class="toolbar">
+                    <h3 class="toolbar-title"><i class="fas fa-list-ul" style="color:#3182ce;"></i> Schedule List</h3>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search by patient name or ID...">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="doctor-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Appointment Time</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Alice Smith</strong>
+                                        <small>ID: PT-10024 &bull; F, 34 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="time-badge"><i class="far fa-clock"></i> 10:00 AM</div>
+                                </td>
+                                <td style="color:#4a5568;">Cardiology</td>
+                                <td><span class="status-badge status-pending"><i class="fas fa-hourglass-half"></i>
+                                        Pending</span></td>
+                                <td>
+                                    <a href="consultation.html" class="action-btn-primary"><i
+                                            class="fas fa-file-medical"></i> View Details & Consult</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Bob Johnson</strong>
+                                        <small>ID: PT-10025 &bull; M, 42 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="time-badge"><i class="far fa-clock"></i> 10:30 AM</div>
+                                </td>
+                                <td style="color:#4a5568;">Cardiology</td>
+                                <td><span class="status-badge status-pending"><i class="fas fa-hourglass-half"></i>
+                                        Pending</span></td>
+                                <td>
+                                    <a href="consultation.html" class="action-btn-primary"><i
+                                            class="fas fa-file-medical"></i> View Details & Consult</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Charlie Brown</strong>
+                                        <small>ID: PT-10026 &bull; M, 28 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="time-badge" style="background:#edf2f7; color:#4a5568;"><i
+                                            class="far fa-clock"></i> 09:00 AM</div>
+                                </td>
+                                <td style="color:#4a5568;">Cardiology</td>
+                                <td><span class="status-badge status-completed"><i class="fas fa-check-circle"></i>
+                                        Completed</span></td>
+                                <td>
+                                    <a href="consultation.html?status=completed" class="action-btn-primary"
+                                        style="background:white; color:#3182ce; border:1px solid #3182ce;"><i
+                                            class="fas fa-eye"></i> View Record</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Diana Prince</strong>
+                                        <small>ID: PT-10027 &bull; F, 30 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="time-badge"><i class="far fa-clock"></i> 11:30 AM</div>
+                                </td>
+                                <td style="color:#4a5568;">Cardiology</td>
+                                <td><span class="status-badge status-pending"><i class="fas fa-hourglass-half"></i>
+                                        Pending</span></td>
+                                <td>
+                                    <a href="consultation.html" class="action-btn-primary"><i
+                                            class="fas fa-file-medical"></i> View Details & Consult</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/script.js"></script>
+</body>
+
+</html>

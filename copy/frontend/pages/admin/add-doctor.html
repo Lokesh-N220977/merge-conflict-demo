@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Doctor - MedicPulse Admin</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .form-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid #edf2f7;
+        }
+
+        .form-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #edf2f7;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .form-header-icon {
+            width: 50px;
+            height: 50px;
+            background: #ebf8ff;
+            color: #3182ce;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .form-header-text h2 {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+
+        .form-header-text p {
+            color: #718096;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section-title i {
+            color: #a0aec0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i.icon-left {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 1.1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: #2d3748;
+            background-color: #f8fafc;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3182ce;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #cbd5e0;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a0aec0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+        }
+
+        /* Specialized file upload acting as drag/drop */
+        .photo-upload {
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .photo-upload:hover {
+            border-color: #3182ce;
+            background: #ebf8ff;
+        }
+
+        .photo-upload i {
+            font-size: 2.5rem;
+            color: #a0aec0;
+            margin-bottom: 15px;
+        }
+
+        .photo-upload p {
+            margin: 0;
+            color: #4a5568;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .photo-upload span {
+            color: #718096;
+            font-size: 0.85rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .btn-cancel {
+            background-color: white;
+            color: #4a5568;
+            padding: 12px 28px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #f7fafc;
+        }
+
+        .btn-submit {
+            background-color: var(--primary-color, #0056b3);
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0, 86, 179, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: #004494;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 86, 179, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MedicPulse</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="add-doctor.html" class="active"><i class="fas fa-user-plus"></i> Add Doctor</a></li>
+                <li><a href="manage-doctors.html"><i class="fas fa-user-md"></i> Manage Doctors</a></li>
+                <li><a href="appointments.html"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="patients.html"><i class="fas fa-users"></i> Patients</a></li>
+                <li><a href="analytics.html"><i class="fas fa-poll"></i> Analytics</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="main-wrapper">
+            <!-- Header -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="system-name">MedicPulse Admin Panel</span>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <span class="user-name">Admin User</span>
+                        <div class="notification-icon"><i class="fas fa-bell"></i></div>
+                    </div>
+                    <a href="../login.html" class="logout-btn"
+                        style="margin-left: 20px; padding: 8px 16px; background: #ffebee; color: #c62828; border-radius: 6px; font-weight: 500; border: 1px solid #ffcdd2; display: flex; align-items: center; gap: 8px; transition: 0.2s;"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="content-area">
+                <div class="page-header" style="margin-bottom: 30px;">
+                    <h1>Onboard Doctor</h1>
+                    <p>Register a new clinical staff member with full credentials to the system.</p>
+                </div>
+
+                <div class="form-card">
+                    <div class="form-header">
+                        <div class="form-header-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="form-header-text">
+                            <h2>Doctor Registration Setup</h2>
+                            <p>Fill in all the required details to grant system access.</p>
+                        </div>
+                    </div>
+
+                    <form id="addDoctorForm" onsubmit="handleAddDoctor(event)">
+
+                        <h3 class="form-section-title"><i class="fas fa-info-circle"></i> Personal Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="docName">Full Name</label>
+                                <div class="input-group">
+                                    <i class="fas fa-user icon-left"></i>
+                                    <input type="text" id="docName" class="form-control" placeholder="E.g. Dr. John Doe"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="docEmail">Email Address</label>
+                                <div class="input-group">
+                                    <i class="fas fa-envelope icon-left"></i>
+                                    <input type="email" id="docEmail" class="form-control"
+                                        placeholder="doctor@medicpulse.com" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="docPhone">Phone Number</label>
+                                <div class="input-group">
+                                    <i class="fas fa-phone-alt icon-left"></i>
+                                    <input type="tel" id="docPhone" class="form-control" placeholder="+1 (555) 000-0000"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="docPassword">Temporary Password</label>
+                                <div class="input-group">
+                                    <i class="fas fa-lock icon-left"></i>
+                                    <input type="password" id="docPassword" class="form-control" placeholder="••••••••"
+                                        required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="form-section-title" style="margin-top: 10px;"><i class="fas fa-stethoscope"></i>
+                            Professional Credentials</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label" for="docSpecialty">Primary Specialization</label>
+                                <div class="input-group">
+                                    <i class="fas fa-briefcase-medical icon-left"></i>
+                                    <select id="docSpecialty" class="form-control" required>
+                                        <option value="" disabled selected>Select Primary Specialization...</option>
+                                        <option value="Cardiology">Cardiology</option>
+                                        <option value="Neurology">Neurology</option>
+                                        <option value="Orthopedics">Orthopedics</option>
+                                        <option value="Pediatrics">Pediatrics</option>
+                                        <option value="Dermatology">Dermatology</option>
+                                        <option value="General Practice">General Practice</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="docExp">Years of Experience</label>
+                                <div class="input-group">
+                                    <i class="fas fa-calendar-check icon-left"></i>
+                                    <input type="number" id="docExp" class="form-control" placeholder="E.g. 5" min="0"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="docDays">Weekly Availability</label>
+                                <div class="input-group">
+                                    <i class="fas fa-calendar-week icon-left"></i>
+                                    <input type="text" id="docDays" class="form-control"
+                                        placeholder="E.g. Mon, Wed, Fri" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="docTime">Operating Hours</label>
+                                <div class="input-group">
+                                    <i class="fas fa-clock icon-left"></i>
+                                    <input type="text" id="docTime" class="form-control"
+                                        placeholder="E.g. 09:00 AM - 05:00 PM" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label class="form-label">Profile Photo (Optional)</label>
+                                <div class="photo-upload">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drop your file here, or <span
+                                            style="color: #3182ce; text-decoration: underline;">browse</span></p>
+                                    <span>Supports JPG, PNG and SVG files up to 2MB</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancel"
+                                onclick="window.location.href='manage-doctors.html'">Cancel</button>
+                            <button type="submit" class="btn-submit">
+                                <i class="fas fa-save"></i> Register Doctor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/script.js"></script>
+    <script>
+        async function handleAddDoctor(e) {
+            e.preventDefault();
+            // Simulating save animation
+            const btn = e.target.querySelector('.btn-submit');
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            btn.style.opacity = '0.7';
+
+            // Gather values
+            const payload = {
+                name: document.getElementById('docName').value,
+                email: document.getElementById('docEmail').value,
+                phone: document.getElementById('docPhone').value,
+                password: document.getElementById('docPassword').value,
+                specialization: document.getElementById('docSpecialty').value,
+                experience: parseInt(document.getElementById('docExp').value) || 0,
+                available_days: document.getElementById('docDays').value.split(',').map(d => d.trim()),
+                operating_hours: document.getElementById('docTime').value
+            };
+
+            try {
+                // Must ensure script.js is loaded for authFetch and API_BASE_URL
+                const response = await authFetch(`${API_BASE_URL}/doctors`, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Doctor successfully onboarded and system credentials sent!");
+                    e.target.reset();
+                } else {
+                    alert(data.detail || "Failed to onboard doctor!");
+                }
+            } catch (err) {
+                console.error("Add Doctor Error:", err);
+                alert("Could not reach the server to onboard the doctor.");
+            } finally {
+                btn.innerHTML = oldText;
+                btn.style.opacity = '1';
+            }
+        }
+    </script>
+</body>
+
+</html>

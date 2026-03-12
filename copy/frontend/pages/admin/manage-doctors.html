@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Doctors - MedicPulse Admin</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            text-align: left;
+            padding: 16px 24px;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+        }
+
+        .admin-table th {
+            background-color: #f8fafc;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .admin-table tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .doctor-profile-table {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .doctor-avatar {
+            width: 48px;
+            height: 48px;
+            background-color: #ebf8ff;
+            color: #2b6cb0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .doctor-info strong {
+            display: block;
+            color: #2d3748;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .doctor-info small {
+            color: #718096;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #475569;
+            display: inline-block;
+        }
+
+        .badge-specialty {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #dcfce7;
+        }
+
+        /* Toolbar Styles */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 42px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #4a5568;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f7fafc;
+        }
+
+        .action-btn.edit:hover {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            border-color: #90cdf4;
+        }
+
+        .action-btn.delete:hover {
+            background: #fed7d7;
+            color: #e53e3e;
+            border-color: #feb2b2;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: white;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .page-info {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        .page-btn.active {
+            background: var(--primary-color, #0056b3);
+            color: white;
+            border-color: var(--primary-color, #0056b3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MedicPulse</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="add-doctor.html"><i class="fas fa-user-plus"></i> Add Doctor</a></li>
+                <li><a href="manage-doctors.html" class="active"><i class="fas fa-user-md"></i> Manage Doctors</a></li>
+                <li><a href="appointments.html"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="patients.html"><i class="fas fa-users"></i> Patients</a></li>
+                <li><a href="analytics.html"><i class="fas fa-poll"></i> Analytics</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="main-wrapper">
+            <!-- Header -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="system-name">MedicPulse Admin Panel</span>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <span class="user-name">Admin User</span>
+                        <div class="notification-icon"><i class="fas fa-bell"></i></div>
+                    </div>
+                    <a href="../login.html" class="logout-btn"
+                        style="margin-left: 20px; padding: 8px 16px; background: #ffebee; color: #c62828; border-radius: 6px; font-weight: 500; border: 1px solid #ffcdd2; display: flex; align-items: center; gap: 8px; transition: 0.2s;"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="content-area">
+                <div class="page-header"
+                    style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+                    <div>
+                        <h1>Doctors Directory</h1>
+                        <p>Manage, onboard, and review all hospital doctors.</p>
+                    </div>
+                    <a href="add-doctor.html" class="btn btn-primary" style="padding: 10px 20px; font-size: 0.95rem;">
+                        <i class="fas fa-plus" style="margin-right: 8px;"></i> Onboard Doctor
+                    </a>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search doctors by name or department...">
+                    </div>
+                    <div class="filters" style="display: flex; gap: 12px;">
+                        <button class="action-btn" style="width: auto; padding: 0 16px; font-weight: 500;"
+                            title="Filter Options">
+                            <i class="fas fa-filter" style="margin-right: 8px;"></i> Filters
+                        </button>
+                        <button class="action-btn" style="width: auto; padding: 0 16px; font-weight: 500;"
+                            title="Export List">
+                            <i class="fas fa-file-export" style="margin-right: 8px;"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Doctor Profile</th>
+                                <th>Department</th>
+                                <th>Experience</th>
+                                <th>Contact Number</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctorsTableBody">
+                            <!-- Rows injected by JS -->
+                        </tbody>
+                    </table>
+
+                    <!-- Professional Pagination -->
+                    <div class="pagination">
+                        <div class="page-info">
+                            Showing <strong>1</strong> to <strong>4</strong> of <strong>42</strong> doctors
+                        </div>
+                        <div class="page-controls">
+                            <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            ...
+                            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/script.js"></script>
+    <script>
+        const API = 'http://localhost:8000/api';
+        let allDoctors = [];
+
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        async function loadDoctors() {
+            const tbody = document.getElementById('doctorsTableBody');
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#718096;">Loading...</td></tr>';
+            try {
+                const res = await fetch(`${API}/doctors`);
+                if (!res.ok) throw new Error('Failed to load doctors');
+                allDoctors = await res.json();
+                renderTable(allDoctors);
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:30px;color:#e53e3e;">Error: ${e.message}</td></tr>`;
+            }
+        }
+
+        function renderTable(doctors) {
+            const tbody = document.getElementById('doctorsTableBody');
+            if (doctors.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:#718096;">No doctors found.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = doctors.map(doc => {
+                const initials = (doc.name || 'Dr').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+                const avatarColors = ['#ebf8ff;color:#2b6cb0', '#fff5f5;color:#c53030', '#f0fff4;color:#276749', '#faf5ff;color:#553c9a', '#fffff0;color:#744210'];
+                const colorIdx = (doc._id || '').charCodeAt(0) % avatarColors.length;
+                return `<tr>
+                    <td>
+                        <div class="doctor-profile-table">
+                            <div class="doctor-avatar" style="background:${avatarColors[colorIdx]}">${initials}</div>
+                            <div class="doctor-info">
+                                <strong>${doc.name || 'Unknown'}</strong>
+                                <small>${doc.email || ''}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-specialty">${doc.specialization || '—'}</span></td>
+                    <td><i class="fas fa-briefcase" style="color:#a0aec0;margin-right:4px;"></i> ${doc.experience || '—'} Years</td>
+                    <td style="color:#4a5568;">${doc.phone || '—'}</td>
+                    <td><span class="badge" style="background:#dcfce7;color:#166534;"><i class="fas fa-circle" style="font-size:8px;margin-right:4px;"></i> Active</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn delete" title="Remove" onclick="confirmDelete('${doc._id}', '${doc.name}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // Live search
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDoctors();
+            const searchInput = document.querySelector('.search-box input');
+            searchInput.addEventListener('input', (e) => {
+                const q = e.target.value.toLowerCase();
+                const filtered = allDoctors.filter(d =>
+                    (d.name || '').toLowerCase().includes(q) ||
+                    (d.specialization || '').toLowerCase().includes(q)
+                );
+                renderTable(filtered);
+            });
+        });
+
+        async function confirmDelete(doctorId, doctorName) {
+            if (!confirm(`Are you sure you want to remove Dr. ${doctorName}? This action cannot be undone.`)) return;
+            const token = getToken();
+            if (!token) { alert('Admin login required.'); return; }
+            try {
+                const res = await fetch(`${API}/admin/remove-doctor/${doctorId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Delete failed');
+                }
+                alert(`Dr. ${doctorName} has been removed.`);
+                loadDoctors();
+            } catch (e) {
+                alert(`Error: ${e.message}`);
+            }
+        }
+    </script>
+</body>
+</html>

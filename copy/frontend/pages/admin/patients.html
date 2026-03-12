@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patients Directory - MedicPulse Admin</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            text-align: left;
+            padding: 16px 24px;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+        }
+
+        .admin-table th {
+            background-color: #f8fafc;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .admin-table tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .patient-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .patient-avatar {
+            width: 48px;
+            height: 48px;
+            background-color: #f1f5f9;
+            color: #475569;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .patient-info strong {
+            display: block;
+            color: #2d3748;
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .patient-info small {
+            color: #718096;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: #475569;
+            display: inline-block;
+        }
+
+        .badge-status.active {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+
+        .badge-status.inactive {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        /* Toolbar Styles */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 42px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #4a5568;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f7fafc;
+        }
+
+        .action-btn.edit:hover {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            border-color: #90cdf4;
+        }
+
+        .action-btn.history:hover {
+            background: #f0fff4;
+            color: #276749;
+            border-color: #9ae6b4;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: white;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .page-info {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        .page-btn.active {
+            background: var(--primary-color, #0056b3);
+            color: white;
+            border-color: var(--primary-color, #0056b3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MedicPulse</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="add-doctor.html"><i class="fas fa-user-plus"></i> Add Doctor</a></li>
+                <li><a href="manage-doctors.html"><i class="fas fa-user-md"></i> Manage Doctors</a></li>
+                <li><a href="appointments.html"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="patients.html" class="active"><i class="fas fa-users"></i> Patients</a></li>
+                <li><a href="analytics.html"><i class="fas fa-poll"></i> Analytics</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="main-wrapper">
+            <!-- Header -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="system-name">MedicPulse Admin Panel</span>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <span class="user-name">Admin User</span>
+                        <div class="notification-icon"><i class="fas fa-bell"></i></div>
+                    </div>
+                    <a href="../login.html" class="logout-btn"
+                        style="margin-left: 20px; padding: 8px 16px; background: #ffebee; color: #c62828; border-radius: 6px; font-weight: 500; border: 1px solid #ffcdd2; display: flex; align-items: center; gap: 8px; transition: 0.2s;"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="content-area">
+                <div class="page-header"
+                    style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+                    <div>
+                        <h1>Patients Directory</h1>
+                        <p>View, manage, and access records for all registered patients.</p>
+                    </div>
+                    <button class="btn btn-primary" style="padding: 10px 20px; font-size: 0.95rem;"
+                        onclick="window.location.href='add-patient.html'">
+                        <i class="fas fa-user-plus" style="margin-right: 8px;"></i> Add Patient
+                    </button>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search patients by name, ID, or email...">
+                    </div>
+                    <div class="filters" style="display: flex; gap: 12px;">
+                        <button class="action-btn" style="width: auto; padding: 0 16px; font-weight: 500;"
+                            title="Filter Options">
+                            <i class="fas fa-filter" style="margin-right: 8px;"></i> Filters
+                        </button>
+                        <button class="action-btn" style="width: auto; padding: 0 16px; font-weight: 500;"
+                            title="Export List">
+                            <i class="fas fa-file-export" style="margin-right: 8px;"></i> Export Data
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Details</th>
+                                <th>Contact Information</th>
+                                <th>Account Status</th>
+                                <th>Registered On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="patient-profile">
+                                        <div class="patient-avatar">AS</div>
+                                        <div class="patient-info">
+                                            <strong>Alice Smith</strong>
+                                            <small>ID: PT-10024 &bull; Female, 34 yrs</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="color:#2d3748; font-weight: 500;">+1 (555) 111-2222</div>
+                                    <div style="color:#718096; font-size: 0.85rem;">alice.smith@example.com</div>
+                                </td>
+                                <td><span class="badge badge-status active"><i class="fas fa-circle"
+                                            style="font-size:8px; margin-right:4px;"></i> Active</span></td>
+                                <td style="color:#4a5568;"><i class="far fa-calendar-alt"
+                                        style="margin-right:6px; color:#a0aec0;"></i> Jan 10, 2023</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Edit Profile"><i
+                                                class="fas fa-pen"></i></button>
+                                        <button class="action-btn history" title="Medical History"><i
+                                                class="fas fa-notes-medical"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-profile">
+                                        <div class="patient-avatar">BJ</div>
+                                        <div class="patient-info">
+                                            <strong>Bob Johnson</strong>
+                                            <small>ID: PT-10025 &bull; Male, 42 yrs</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="color:#2d3748; font-weight: 500;">+1 (555) 222-3333</div>
+                                    <div style="color:#718096; font-size: 0.85rem;">bob.j@example.com</div>
+                                </td>
+                                <td><span class="badge badge-status active"><i class="fas fa-circle"
+                                            style="font-size:8px; margin-right:4px;"></i> Active</span></td>
+                                <td style="color:#4a5568;"><i class="far fa-calendar-alt"
+                                        style="margin-right:6px; color:#a0aec0;"></i> Feb 15, 2023</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Edit Profile"><i
+                                                class="fas fa-pen"></i></button>
+                                        <button class="action-btn history" title="Medical History"><i
+                                                class="fas fa-notes-medical"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-profile">
+                                        <div class="patient-avatar">CB</div>
+                                        <div class="patient-info">
+                                            <strong>Charlie Brown</strong>
+                                            <small>ID: PT-10026 &bull; Male, 28 yrs</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="color:#2d3748; font-weight: 500;">+1 (555) 333-4444</div>
+                                    <div style="color:#718096; font-size: 0.85rem;">charlie.b@example.com</div>
+                                </td>
+                                <td><span class="badge badge-status inactive"><i class="fas fa-circle"
+                                            style="font-size:8px; margin-right:4px;"></i> Inactive</span></td>
+                                <td style="color:#4a5568;"><i class="far fa-calendar-alt"
+                                        style="margin-right:6px; color:#a0aec0;"></i> Mar 22, 2023</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Edit Profile"><i
+                                                class="fas fa-pen"></i></button>
+                                        <button class="action-btn history" title="Medical History"><i
+                                                class="fas fa-notes-medical"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-profile">
+                                        <div class="patient-avatar">DP</div>
+                                        <div class="patient-info">
+                                            <strong>Diana Prince</strong>
+                                            <small>ID: PT-10027 &bull; Female, 30 yrs</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="color:#2d3748; font-weight: 500;">+1 (555) 444-5555</div>
+                                    <div style="color:#718096; font-size: 0.85rem;">diana.p@example.com</div>
+                                </td>
+                                <td><span class="badge badge-status active"><i class="fas fa-circle"
+                                            style="font-size:8px; margin-right:4px;"></i> Active</span></td>
+                                <td style="color:#4a5568;"><i class="far fa-calendar-alt"
+                                        style="margin-right:6px; color:#a0aec0;"></i> Apr 05, 2023</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Edit Profile"><i
+                                                class="fas fa-pen"></i></button>
+                                        <button class="action-btn history" title="Medical History"><i
+                                                class="fas fa-notes-medical"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-profile">
+                                        <div class="patient-avatar">EW</div>
+                                        <div class="patient-info">
+                                            <strong>Evan Wright</strong>
+                                            <small>ID: PT-10028 &bull; Male, 55 yrs</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="color:#2d3748; font-weight: 500;">+1 (555) 555-6666</div>
+                                    <div style="color:#718096; font-size: 0.85rem;">evan.wright@example.com</div>
+                                </td>
+                                <td><span class="badge badge-status active"><i class="fas fa-circle"
+                                            style="font-size:8px; margin-right:4px;"></i> Active</span></td>
+                                <td style="color:#4a5568;"><i class="far fa-calendar-alt"
+                                        style="margin-right:6px; color:#a0aec0;"></i> May 18, 2023</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Edit Profile"><i
+                                                class="fas fa-pen"></i></button>
+                                        <button class="action-btn history" title="Medical History"><i
+                                                class="fas fa-notes-medical"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-profile">
+                                        <div class="patient-avatar">FG</div>
+                                        <div class="patient-info">
+                                            <strong>Fiona Gallagher</strong>
+                                            <small>ID: PT-10029 &bull; Female, 22 yrs</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="color:#2d3748; font-weight: 500;">+1 (555) 666-7777</div>
+                                    <div style="color:#718096; font-size: 0.85rem;">fiona.g@example.com</div>
+                                </td>
+                                <td><span class="badge badge-status active"><i class="fas fa-circle"
+                                            style="font-size:8px; margin-right:4px;"></i> Active</span></td>
+                                <td style="color:#4a5568;"><i class="far fa-calendar-alt"
+                                        style="margin-right:6px; color:#a0aec0;"></i> Jun 30, 2023</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Edit Profile"><i
+                                                class="fas fa-pen"></i></button>
+                                        <button class="action-btn history" title="Medical History"><i
+                                                class="fas fa-notes-medical"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Professional Pagination -->
+                    <div class="pagination">
+                        <div class="page-info">
+                            Showing <strong>1</strong> to <strong>6</strong> of <strong>1,204</strong> patients
+                        </div>
+                        <div class="page-controls">
+                            <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            ...
+                            <button class="page-btn">201</button>
+                            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/script.js"></script>
+</body>
+
+</html>

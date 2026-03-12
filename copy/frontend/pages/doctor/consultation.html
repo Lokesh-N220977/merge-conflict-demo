@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Consultation - MedicPulse</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .consult-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        /* Patient Info Panel */
+        .patient-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #edf2f7;
+            overflow: hidden;
+            align-self: start;
+        }
+
+        .patient-panel-header {
+            background: #ebf8ff;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid #bee3f8;
+        }
+
+        .patient-avatar-large {
+            width: 80px;
+            height: 80px;
+            background: white;
+            color: #3182ce;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 4px 6px rgba(49, 130, 206, 0.1);
+        }
+
+        .patient-panel-header h2 {
+            margin: 0 0 5px 0;
+            color: #2d3748;
+            font-size: 1.4rem;
+        }
+
+        .patient-panel-header p {
+            margin: 0;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .patient-details-list {
+            padding: 20px;
+            list-style: none;
+            margin: 0;
+        }
+
+        .patient-details-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #edf2f7;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .patient-details-list li:last-child {
+            border-bottom: none;
+        }
+
+        .patient-details-list i {
+            color: #a0aec0;
+            margin-top: 4px;
+            width: 16px;
+            text-align: center;
+        }
+
+        .detail-content {
+            flex: 1;
+        }
+
+        .detail-label {
+            display: block;
+            font-size: 0.8rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+        }
+
+        .detail-value {
+            color: #2d3748;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        /* Consultation Form Area */
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #edf2f7;
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin: 0 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .form-section-title i {
+            color: #3182ce;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: #2d3748;
+            background-color: #f8fafc;
+            transition: all 0.3s;
+            resize: vertical;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3182ce;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .btn-cancel {
+            background-color: white;
+            color: #4a5568;
+            padding: 12px 28px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #f7fafc;
+        }
+
+        .btn-submit {
+            background-color: #38a169;
+            color: white;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(56, 161, 105, 0.2);
+        }
+
+        .btn-submit:hover {
+            background-color: #2f855a;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1024px) {
+            .consult-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MedicPulse</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="today-appointments.html" class="active"><i class="fas fa-calendar-day"></i> Today's
+                        Schedule</a></li>
+                <li><a href="schedule.html"><i class="fas fa-calendar-alt"></i> My Calendar</a></li>
+                <li><a href="history.html"><i class="fas fa-history"></i> Patient History</a></li>
+                <li><a href="profile.html"><i class="fas fa-user-md"></i> My Profile</a></li>
+            </ul>
+        </div>
+
+        <div class="main-wrapper">
+            <!-- Header -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="system-name">MedicPulse Doctor Portal</span>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <span class="user-name">Dr. John Doe</span>
+                    </div>
+                    <a href="../login.html" class="logout-btn"
+                        style="margin-left: 20px; padding: 8px 16px; background: #ffebee; color: #c62828; border-radius: 6px; font-weight: 500; border: 1px solid #ffcdd2; display: flex; align-items: center; gap: 8px; transition: 0.2s;"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="content-area">
+                <div class="page-header" style="margin-bottom: 30px;">
+                    <a href="today-appointments.html"
+                        style="color:#718096; text-decoration:none; margin-bottom:10px; display:inline-block;"><i
+                            class="fas fa-arrow-left"></i> Back to Schedule</a>
+                    <h1>Patient Consultation</h1>
+                    <p>Record medical observations, diagnosis, and issue prescriptions securely.</p>
+                </div>
+
+                <div class="consult-grid">
+                    <!-- Left: Patient Read-only Data -->
+                    <div class="patient-panel">
+                        <div class="patient-panel-header">
+                            <div class="patient-avatar-large">AS</div>
+                            <h2>Alice Smith</h2>
+                            <p>ID: PT-10024</p>
+                        </div>
+                        <ul class="patient-details-list">
+                            <li>
+                                <i class="fas fa-user"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">Demographics</span>
+                                    <span class="detail-value">Female, 34 Years Old</span>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone-alt"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">Contact</span>
+                                    <span class="detail-value">+1 (555) 111-2222</span>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-tint"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">Blood Group</span>
+                                    <span class="detail-value" style="color:#e53e3e; font-weight:700;">O+</span>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-clock"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">Appointment Time</span>
+                                    <span class="detail-value">Today, 10:00 AM</span>
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-history"></i>
+                                <div class="detail-content">
+                                    <span class="detail-label">Previous Visit History</span>
+                                    <span class="detail-value">2 months ago (Routine Checkup) <br> <a href="#"
+                                            style="color:#3182ce; font-size:0.85rem; text-decoration:none;">View past
+                                            records</a></span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Right: Medical Record Entry Form -->
+                    <div class="form-card">
+                        <form onsubmit="handleConsultationSubmit(event)">
+
+                            <h3 class="form-section-title"><i class="fas fa-stethoscope"></i> Clinical Assessment</h3>
+
+                            <div class="form-group">
+                                <label class="form-label" for="diagnosis">Diagnosis</label>
+                                <input type="text" id="diagnosis" class="form-control"
+                                    placeholder="E.g. Acute Bronchitis" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="notes">Clinical Notes & Observations</label>
+                                <textarea id="notes" class="form-control" rows="4"
+                                    placeholder="Record patient symptoms, vitals, and physical examination findings..."
+                                    required></textarea>
+                            </div>
+
+                            <h3
+                                style="border-bottom: 2px solid #edf2f7; padding-bottom: 10px; margin: 30px 0 20px 0; color: #2b6cb0;">
+                                <i class="fas fa-pills" style="margin-right: 8px;"></i> Treatment Plan
+                            </h3>
+
+                            <div class="form-group" style="margin-bottom: 20px;">
+                                <label class="form-label">How would you like to provide the prescription?</label>
+                                <div style="display: flex; gap: 20px; margin-top: 8px;">
+                                    <label
+                                        style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500; color: #4a5568;">
+                                        <input type="radio" name="rx_method" value="text" checked
+                                            onchange="toggleRxMethod(this.value)"
+                                            style="width: 16px; height: 16px; accent-color: #3182ce;">
+                                        Type Manually
+                                    </label>
+                                    <label
+                                        style="cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 500; color: #4a5568;">
+                                        <input type="radio" name="rx_method" value="upload"
+                                            onchange="toggleRxMethod(this.value)"
+                                            style="width: 16px; height: 16px; accent-color: #3182ce;">
+                                        Upload Document / Photo
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div id="rx-text-section" class="form-group" style="transition: opacity 0.3s ease;">
+                                <label class="form-label" for="prescription">Prescription / Report Details</label>
+                                <textarea id="prescription" class="form-control" rows="4"
+                                    placeholder="1. Amoxicillin 500mg (Take 1 tab 3x daily for 7 days)&#10;2. Ibuprofen 400mg (As needed for pain)"></textarea>
+                            </div>
+
+                            <div id="rx-upload-section" class="form-group"
+                                style="display: none; transition: opacity 0.3s ease;">
+                                <label class="form-label">Upload Prescriptions or Medical Images</label>
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 5px;">
+                                    <div class="file-upload-box"
+                                        style="border: 2px dashed #cbd5e0; border-radius: 8px; padding: 25px; text-align: center; cursor: pointer; background: #f8fafc; transition: 0.2s;"
+                                        onclick="openCameraModal()"
+                                        onmouseover="this.style.borderColor='#3182ce'; this.style.background='#ebf8ff';"
+                                        onmouseout="this.style.borderColor='#cbd5e0'; this.style.background='#f8fafc';">
+                                        <i class="fas fa-camera"
+                                            style="font-size: 2.2rem; color: #3182ce; margin-bottom: 12px;"></i>
+                                        <p style="margin: 0; color: #4a5568; font-weight: 500;">Take a Picture</p>
+                                        <span
+                                            style="font-size: 0.8rem; color: #718096; display:block; margin-top:5px;">Open
+                                            live webcam directly</span>
+                                    </div>
+                                    <div class="file-upload-box"
+                                        style="border: 2px dashed #cbd5e0; border-radius: 8px; padding: 25px; text-align: center; cursor: pointer; background: #f8fafc; transition: 0.2s;"
+                                        onclick="document.getElementById('file-upload').click()"
+                                        onmouseover="this.style.borderColor='#3182ce'; this.style.background='#ebf8ff';"
+                                        onmouseout="this.style.borderColor='#cbd5e0'; this.style.background='#f8fafc';">
+                                        <i class="fas fa-cloud-upload-alt"
+                                            style="font-size: 2.2rem; color: #a0aec0; margin-bottom: 12px;"></i>
+                                        <p style="margin: 0; color: #4a5568; font-weight: 500;">Upload Files</p>
+                                        <span
+                                            style="font-size: 0.8rem; color: #718096; display:block; margin-top:5px;">Supports
+                                            JPG, PNG, PDF</span>
+                                        <input type="file" id="file-upload" multiple accept="image/*,.pdf"
+                                            style="display: none;" onchange="handleFileUpload(event)">
+                                    </div>
+                                </div>
+                                <div id="upload-preview"
+                                    style="display: flex; gap: 12px; margin-top: 15px; flex-wrap: wrap;">
+                                    <!-- Embedded previews via JS -->
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 25px;">
+                                <label class="form-label" for="followup">Recommended Follow-up (Optional)</label>
+                                <input type="date" id="followup" class="form-control" onclick="this.showPicker()">
+                            </div>
+
+                            <div class="form-actions" id="action-buttons">
+                                <button type="button" class="btn-cancel"
+                                    onclick="window.location.href='today-appointments.html'">Discard Edits</button>
+                                <button type="submit" class="btn-submit" id="main-submit-btn">
+                                    <i class="fas fa-check-circle"></i> Mark as Completed
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- WebRTC Camera Modal -->
+    <div id="camera-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;">
+        <div
+            style="background: white; padding: 24px; border-radius: 12px; max-width: 500px; width: 90%; text-align: center;">
+            <h3 style="margin-top: 0; color: #2d3748; margin-bottom: 20px;">Live Camera Capture <button
+                    style="float: right; border: none; background: transparent; font-size: 1.5rem; cursor: pointer; color: #a0aec0;"
+                    onclick="closeCameraModal()">&times;</button></h3>
+            <video id="camera-stream" style="width: 100%; border-radius: 8px; background: #000; display: block;"
+                autoplay playsinline></video>
+            <div style="margin-top: 20px; display: flex; gap: 15px; justify-content: center;">
+                <button type="button" class="btn-cancel" onclick="closeCameraModal()"
+                    style="padding: 10px 20px;">Cancel</button>
+                <button type="button" class="btn-submit" onclick="snapPhoto()"
+                    style="padding: 10px 20px; font-weight: 600;"><i class="fas fa-camera"></i> Snap Photo</button>
+            </div>
+            <canvas id="camera-canvas" style="display: none;"></canvas>
+        </div>
+    </div>
+
+    <script src="../../js/script.js"></script>
+    <script>
+        function toggleRxMethod(method) {
+            const textSection = document.getElementById('rx-text-section');
+            const uploadSection = document.getElementById('rx-upload-section');
+
+            if (method === 'text') {
+                textSection.style.display = 'block';
+                uploadSection.style.display = 'none';
+
+                // Opacity trick for smooth visual transition
+                setTimeout(() => {
+                    textSection.style.opacity = '1';
+                }, 10);
+                uploadSection.style.opacity = '0';
+            } else {
+                uploadSection.style.display = 'block';
+                textSection.style.display = 'none';
+
+                setTimeout(() => {
+                    uploadSection.style.opacity = '1';
+                }, 10);
+                textSection.style.opacity = '0';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+
+            if (status === 'completed') {
+                const btn = document.getElementById('main-submit-btn');
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Updates';
+
+                const actions = document.getElementById('action-buttons');
+                const revertBtn = document.createElement('button');
+                revertBtn.type = 'button';
+                revertBtn.className = 'btn-cancel';
+                revertBtn.style.color = '#e53e3e';
+                revertBtn.style.borderColor = '#fc8181';
+                revertBtn.style.marginRight = 'auto'; // push it to the left
+                revertBtn.innerHTML = '<i class="fas fa-undo"></i> Revert to Pending';
+                revertBtn.onclick = () => {
+                    if (confirm("Are you sure you want to revert this appointment to pending status?")) {
+                        window.location.href = 'today-appointments.html';
+                    }
+                };
+
+                // Add revert button to the far left
+                actions.insertBefore(revertBtn, actions.firstChild);
+            }
+        });
+
+        function handleConsultationSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('main-submit-btn');
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving Record...';
+            btn.style.opacity = '0.8';
+
+            setTimeout(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('status') === 'completed') {
+                    alert("Consultation nodes and attachments successfully updated!");
+                } else {
+                    alert("Consultation nodes and attachments successfully saved! Appointment marked as completed.");
+                }
+                window.location.href = 'today-appointments.html';
+            }, 1000);
+        }
+
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            const previewContainer = document.getElementById('upload-preview');
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const isImage = file.type.startsWith('image/');
+
+                const box = document.createElement('div');
+                box.style.width = '80px';
+                box.style.height = '80px';
+                box.style.borderRadius = '8px';
+                box.style.border = '1px solid #e2e8f0';
+                box.style.display = 'flex';
+                box.style.alignItems = 'center';
+                box.style.justifyContent = 'center';
+                box.style.position = 'relative';
+                box.style.overflow = 'hidden';
+                box.style.background = '#edf2f7';
+
+                if (isImage) {
+                    const img = document.createElement('img');
+                    img.src = URL.createObjectURL(file);
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    box.appendChild(img);
+                } else {
+                    const icon = document.createElement('i');
+                    icon.className = 'fas fa-file-pdf';
+                    icon.style.fontSize = '2rem';
+                    icon.style.color = '#e53e3e';
+                    box.appendChild(icon);
+                }
+
+                // Add tiny remove button
+                const rmBtn = document.createElement('div');
+                rmBtn.innerHTML = '&times;';
+                rmBtn.style.position = 'absolute';
+                rmBtn.style.top = '2px';
+                rmBtn.style.right = '2px';
+                rmBtn.style.background = 'rgba(0,0,0,0.5)';
+                rmBtn.style.color = 'white';
+                rmBtn.style.borderRadius = '50%';
+                rmBtn.style.width = '16px';
+                rmBtn.style.height = '16px';
+                rmBtn.style.display = 'flex';
+                rmBtn.style.alignItems = 'Center';
+                rmBtn.style.justifyContent = 'Center';
+                rmBtn.style.fontSize = '12px';
+                rmBtn.style.cursor = 'pointer';
+                rmBtn.onclick = function (e) { e.stopPropagation(); box.remove(); };
+                box.appendChild(rmBtn);
+
+                previewContainer.appendChild(box);
+            }
+        }
+
+        let videoStream = null;
+
+        async function openCameraModal() {
+            const modal = document.getElementById('camera-modal');
+            const video = document.getElementById('camera-stream');
+            modal.style.display = 'flex';
+
+            try {
+                videoStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                video.srcObject = videoStream;
+                video.play();
+            } catch (err) {
+                alert("Camera access denied or unavailable. Please ensure camera permissions are active or try 'Upload Files' instead.");
+                closeCameraModal();
+            }
+        }
+
+        function closeCameraModal() {
+            const modal = document.getElementById('camera-modal');
+            modal.style.display = 'none';
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
+            }
+        }
+
+        function snapPhoto() {
+            const video = document.getElementById('camera-stream');
+            const canvas = document.getElementById('camera-canvas');
+            if (!videoStream) return;
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+            fetch(dataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    const file = new File([blob], "camera_snapshot_" + Date.now() + ".jpg", { type: "image/jpeg" });
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    handleFileUpload({ target: { files: dt.files } });
+                });
+
+            closeCameraModal();
+        }
+    </script>
+</body>
+
+</html>

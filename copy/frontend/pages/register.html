@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - MedicPulse Hospital</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="login-page">
+    <div class="auth-container">
+        <!-- Left Side: Image & Branding -->
+        <div class="auth-banner">
+            <div class="auth-banner-content">
+                <div class="auth-logo">
+                    <i class="fas fa-notes-medical"></i> MedicPulse
+                </div>
+                <h2>Join Our Healthcare Platform</h2>
+                <p>Create an account to quickly book appointments with verified specialists, manage your health records,
+                    and stay connected with your care team.</p>
+            </div>
+        </div>
+
+        <!-- Right Side: Register Form -->
+        <div class="login-card">
+            <a href="../../index.html" class="back-home">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+
+            <!-- Mobile Header (Hidden on Desktop) -->
+            <div class="auth-header-mobile">
+                <h2><i class="fas fa-notes-medical"></i> MedicPulse</h2>
+                <p>Create an Account</p>
+            </div>
+
+            <div class="login-form-area">
+                <h1 class="form-title">Register</h1>
+                <form id="registerForm">
+                    <div class="input-group">
+                        <label for="fullname">Full Name</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="fullname" placeholder="Enter Full Name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="email">Email Address</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" id="email" placeholder="email@example.com" required>
+                            </div>
+                        </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="gender">Gender</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-venus-mars"></i>
+                                <select id="gender" required>
+                                    <option value="" disabled selected>Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="phone">Phone Number</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" id="phone" placeholder="+1 234 567 8900" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <label for="password">Password</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" placeholder="••••••••" required minlength="6">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="confirm_password">Confirm Password</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="confirm_password" placeholder="••••••••" required
+                                    minlength="6">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-btn">
+                        Create Account <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+
+                <div class="register-link">
+                    Already have an account? <a href="login.html">Login here</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const gender = document.getElementById('gender').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering...';
+            submitBtn.disabled = true;
+
+            const payload = {
+                name: fullname,
+                email: email,
+                phone: phone,
+                gender: gender,
+                password: password
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert("Account created successfully! Please login.");
+                    window.location.href = "login.html";
+                } else {
+                    alert(data.detail || "Registration failed.");
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Registration Error:', error);
+                alert("Unable to reach the server. Please try again.");
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - MedicPulse</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .time-slot {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary-color);
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        .time-slot.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: #fdfdfd;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+        }
+
+        .login-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-dark, #004494);
+            transform: translateY(-2px);
+        }
+
+        .calendar-container {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            background: #fff;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day-label {
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #777;
+            padding-bottom: 5px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .calendar-day:hover:not(.disabled) {
+            background-color: #f0f7ff;
+        }
+
+        .calendar-day.selected {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+        }
+
+        .calendar-day.status-available {
+            color: #2e7d32;
+            background-color: #e8f5e9;
+        }
+
+        .calendar-day.status-leave {
+            background-color: #ffebee;
+            color: #c62828;
+            cursor: not-allowed;
+        }
+        
+        .calendar-day.status-fully_booked {
+            background-color: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .calendar-day.disabled {
+            color: #ccc;
+            cursor: not-allowed;
+            background: none !important;
+        }
+
+        .calendar-legend {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* --- existing styles --- */
+    </style>
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MedicPulse</h2>
+            </div>
+            <ul class="sidebar-menu" id="sidebar-menu">
+                <!-- Menu items will be injected based on page -->
+            </ul>
+        </div>
+
+        <div class="main-wrapper">
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="system-name">MedicPulse Hospital</span>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <span class="user-name" id="navUserName">...</span>
+                        <div class="notification-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                    </div>
+                    <a href="login.html" class="logout-btn">Logout</a>
+                </div>
+            </nav>
+
+            <main class="content-area">
+                <div class="page-header">
+                    <h1>Book a New Appointment</h1>
+                    <p>Find a doctor and schedule your visit in seconds.</p>
+                </div>
+
+                <div class="card booking-form"
+                    style="display: flex; gap: 30px; padding: 30px; flex-wrap: wrap; max-width: 1000px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); border-radius: 12px; background: white;">
+                    <div
+                        style="flex: 1; min-width: 300px; border-radius: 12px; overflow: hidden; display: flex; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                        <img src="../images/appointment-banner.jpg" alt="Professional Healthcare"
+                            style="width: 100%; height: 100%; object-fit: cover; min-height: 400px;">
+                    </div>
+                    <form id="appointmentForm"
+                        style="flex: 1; min-width: 300px; display: flex; flex-direction: column; justify-content: center;">
+                        <div class="input-group">
+                            <label for="dept">Select Department</label>
+                            <select id="dept" name="department" required>
+                                <option value="" disabled selected>Select Department</option>
+                                <!-- Departments will be loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="doctor">Select Doctor</label>
+                            <select id="doctor" name="doctor" required>
+                                <option value="" disabled selected>Select Doctor</option>
+                                <!-- Doctors will be loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Preferred Date</label>
+                            <div class="calendar-container">
+                                <div class="calendar-header">
+                                    <button type="button" id="prevMonth" style="background:none; border:none; cursor:pointer;"><i class="fas fa-chevron-left"></i></button>
+                                    <h3 id="currentMonthDisplay">March 2026</h3>
+                                    <button type="button" id="nextMonth" style="background:none; border:none; cursor:pointer;"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                                <div class="calendar-grid" id="calendarGrid">
+                                    <!-- Calendar days will be injected here -->
+                                </div>
+                                <div class="calendar-legend">
+                                    <div class="legend-item"><div class="legend-dot" style="background:#2e7d32;"></div> Available</div>
+                                    <div class="legend-item"><div class="legend-dot" style="background:#c62828;"></div> Leave</div>
+                                    <div class="legend-item"><div class="legend-dot" style="background:#ef6c00;"></div> Full</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="date" name="date" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Available Time Slots</label>
+                            <div class="time-slots" id="timeSlotsContainer">
+                                <!-- Slots will be loaded dynamically -->
+                            </div>
+                            <!-- Hidden input to store selected time -->
+                            <input type="hidden" id="selectedTime" name="time" value="10:30 AM" required>
+                        </div>
+                        <button type="submit" class="login-btn">Confirm Appointment</button>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="../js/script.js"></script>
+    <script>
+        // ENHANCED UI/UX JS
+        // Ripple effect
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest('button');
+            if (btn && !btn.classList.contains('btn-loading')) {
+                const circle = document.createElement('span');
+                const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+                const radius = diameter / 2;
+                const rect = btn.getBoundingClientRect();
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${e.clientX - rect.left - radius}px`;
+                circle.style.top = `${e.clientY - rect.top - radius}px`;
+                circle.classList.add('ripple');
+                const ripple = btn.querySelector('.ripple');
+                if (ripple) { ripple.remove(); }
+                btn.appendChild(circle);
+            }
+        });
+
+        // Time slot selection
+        const slots = document.querySelectorAll('.time-slot');
+        slots.forEach(slot => {
+            slot.addEventListener('click', function () {
+                slots.forEach(s => s.classList.remove('selected'));
+                this.classList.add('selected');
+                document.getElementById('selectedTime').value = this.dataset.time;
+            });
+        });
+
+        // Form Loading Simulation
+        const form = document.getElementById('appointmentForm');
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                // If there's an existing submit handler in script.js, this will run alongside it.
+                const btn = this.querySelector('button[type="submit"]');
+                if (!btn) return;
+                btn.classList.add('btn-loading');
+                // Remove loading state after a delay
+                setTimeout(() => {
+                    btn.classList.remove('btn-loading');
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+
+</html>

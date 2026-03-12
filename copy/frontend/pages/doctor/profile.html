@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile - MedicPulse</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 30px;
+        }
+
+        /* Left Side: Display Card */
+        .profile-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #edf2f7;
+            padding: 30px 20px;
+            text-align: center;
+            align-self: start;
+        }
+
+        .profile-img-container {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px auto;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ebf8ff;
+        }
+
+        .img-upload-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: #3182ce;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid white;
+            transition: 0.2s;
+        }
+
+        .img-upload-btn:hover {
+            background: #2b6cb0;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+
+        .profile-specialty {
+            color: #3182ce;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin: 0 0 15px 0;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .stat-block h4 {
+            color: #2d3748;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .stat-block p {
+            color: #718096;
+            margin: 0;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        /* Right Side: Edit Form */
+        .settings-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #edf2f7;
+            padding: 30px;
+        }
+
+        .settings-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        .settings-header h3 {
+            margin: 0;
+            color: #2d3748;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #2d3748;
+            background: #fff;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+            outline: none;
+        }
+
+        .form-control:read-only {
+            background: #f7fafc;
+            color: #a0aec0;
+            cursor: not-allowed;
+        }
+
+        .btn-save {
+            background: #3182ce;
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-save:hover {
+            background: #2b6cb0;
+        }
+
+        @media (max-width: 900px) {
+            .profile-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MedicPulse</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="today-appointments.html"><i class="fas fa-calendar-day"></i> Today's Schedule</a></li>
+                <li><a href="schedule.html"><i class="fas fa-calendar-alt"></i> My Calendar</a></li>
+                <li><a href="history.html"><i class="fas fa-history"></i> Patient History</a></li>
+                <li><a href="profile.html" class="active"><i class="fas fa-user-md"></i> My Profile</a></li>
+            </ul>
+        </div>
+
+        <div class="main-wrapper">
+            <!-- Header -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="system-name">MedicPulse Doctor Portal</span>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <span class="user-name">Dr. John Doe</span>
+                    </div>
+                    <a href="../login.html" class="logout-btn"
+                        style="margin-left: 20px; padding: 8px 16px; background: #ffebee; color: #c62828; border-radius: 6px; font-weight: 500; border: 1px solid #ffcdd2; display: flex; align-items: center; gap: 8px; transition: 0.2s;"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="content-area">
+                <div class="page-header" style="margin-bottom: 30px;">
+                    <h1>My Profile</h1>
+                    <p>Manage your personal details, credentials, and consultation settings.</p>
+                </div>
+
+                <div class="profile-layout">
+                    <!-- Display Card -->
+                    <div class="profile-card">
+                        <div class="profile-img-container">
+                            <img src="https://ui-avatars.com/api/?name=John+Doe&background=3182ce&color=fff&size=200"
+                                alt="Dr. John Doe" class="profile-img" id="profileImage">
+                            <label class="img-upload-btn" title="Upload Photo">
+                                <i class="fas fa-camera"></i>
+                                <input type="file" style="display:none;" accept="image/*">
+                            </label>
+                        </div>
+                        <h2 class="profile-name">Dr. John Doe</h2>
+                        <p class="profile-specialty">Senior Cardiologist</p>
+                        <p style="color: #718096; font-size: 0.9rem; margin-bottom: 20px;">MBBS, MD (Cardiology)<br>15+
+                            Years Experience</p>
+
+                        <div class="profile-stats">
+                            <div class="stat-block">
+                                <h4>1.4k</h4>
+                                <p>Patients</p>
+                            </div>
+                            <div class="stat-block">
+                                <h4>4.9<i class="fas fa-star"
+                                        style="color:#d69e2e; font-size:1rem; margin-left:3px;"></i></h4>
+                                <p>Rating</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Editable Settings -->
+                    <div class="settings-card">
+                        <form onsubmit="handleProfileSubmit(event)">
+                            <div class="settings-header"
+                                style="display: flex; justify-content: space-between; align-items: center;">
+                                <h3><i class="fas fa-user-edit" style="color: #3182ce;"></i> Personal Information</h3>
+                                <button type="button" id="editProfileBtn" onclick="toggleEditMode()"
+                                    style="background: none; border: 1px solid #cbd5e0; padding: 6px 12px; border-radius: 6px; color: #4a5568; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px;"><i
+                                        class="fas fa-pencil-alt"></i> Edit Profile</button>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-control edit-field" value="John" disabled required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-control edit-field" value="Doe" disabled required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" value="john.doe@medicpulse.com" readonly
+                                        title="Contact Admin to change email">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control edit-field" value="+1 (555) 987-6543" disabled
+                                        required>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label class="form-label">Short Biography</label>
+                                    <textarea class="form-control edit-field" rows="4"
+                                        disabled>Dedicated and compassionate cardiologist with over 15 years of experience in diagnosing and treating complex heart conditions. Committed to providing patient-centered care and staying abreast of the latest advancements in cardiovascular medicine.</textarea>
+                                </div>
+                            </div>
+
+                            <div class="settings-header" style="margin-top: 40px;">
+                                <h3><i class="fas fa-briefcase-medical" style="color: #3182ce;"></i> Professional
+                                    Details</h3>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label">Department / Specialty</label>
+                                    <input type="text" class="form-control" value="Cardiology" readonly
+                                        title="Contact Admin to change specialty">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Years of Experience</label>
+                                    <input type="number" class="form-control edit-field" value="15" disabled required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Consultation Fee ($)</label>
+                                    <input type="number" class="form-control edit-field" value="150" disabled required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Qualifications</label>
+                                    <input type="text" class="form-control edit-field" value="MBBS, MD" disabled
+                                        required>
+                                </div>
+                            </div>
+
+                            <div style="text-align: right; margin-top: 30px;" id="saveActions">
+                                <button type="button" class="btn-cancel" onclick="toggleEditMode()"
+                                    style="background-color: white; color: #4a5568; padding: 10px 24px; border: 1px solid #cbd5e0; border-radius: 6px; font-weight: 600; cursor: pointer; margin-right: 15px; display: none;"
+                                    id="cancelBtn">Cancel</button>
+                                <button type="submit" class="btn-save" id="saveBtn" style="display: none;">
+                                    <i class="fas fa-save"></i> Save Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/script.js"></script>
+    <script>
+        let isEditing = false;
+
+        function toggleEditMode() {
+            isEditing = !isEditing;
+            const fields = document.querySelectorAll('.edit-field');
+            const saveBtn = document.getElementById('saveBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const editBtn = document.getElementById('editProfileBtn');
+
+            fields.forEach(field => {
+                if (isEditing) {
+                    field.removeAttribute('disabled');
+                    field.style.backgroundColor = '#fff';
+                    field.style.borderColor = '#3182ce';
+                } else {
+                    field.setAttribute('disabled', 'true');
+                    field.style.backgroundColor = '';
+                    field.style.borderColor = '';
+                }
+            });
+
+            if (isEditing) {
+                saveBtn.style.display = 'inline-flex';
+                cancelBtn.style.display = 'inline-block';
+                editBtn.style.display = 'none';
+                fields[0].focus();
+            } else {
+                saveBtn.style.display = 'none';
+                cancelBtn.style.display = 'none';
+                editBtn.style.display = 'inline-flex';
+            }
+        }
+
+        function handleProfileSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('saveBtn');
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            btn.style.opacity = '0.8';
+
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> Saved Successfully';
+                btn.style.background = '#38a169';
+                setTimeout(() => {
+                    btn.innerHTML = oldText;
+                    btn.style.background = '';
+                    btn.style.opacity = '1';
+                    toggleEditMode(); // exit edit mode after save
+                }, 1500);
+            }, 1000);
+        }
+    </script>
+</body>
+
+</html>

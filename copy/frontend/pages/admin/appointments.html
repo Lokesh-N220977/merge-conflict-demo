@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments Management - MedicPulse Admin</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            text-align: left;
+            padding: 16px 24px;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+        }
+
+        .admin-table th {
+            background-color: #f8fafc;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .admin-table tbody tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-align: center;
+        }
+
+        .status-badge i {
+            font-size: 0.7rem;
+        }
+
+        .status-pending {
+            background-color: #fefcbf;
+            color: #975a16;
+        }
+
+        .status-approved {
+            background-color: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-completed {
+            background-color: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .status-cancelled {
+            background-color: #fed7d7;
+            color: #9b2c2c;
+        }
+
+        .patient-info strong {
+            display: block;
+            color: #2d3748;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .patient-info small {
+            color: #718096;
+            font-size: 0.8rem;
+        }
+
+        .doctor-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .doc-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #ebf8ff;
+            color: #2b6cb0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .date-time {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        .date-time i {
+            color: #a0aec0;
+            margin-right: 6px;
+            width: 14px;
+        }
+
+        /* Toolbar Styles */
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px 10px 42px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #4a5568;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+        }
+
+        .filters {
+            display: flex;
+            gap: 12px;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: white;
+            color: #4a5568;
+            font-size: 0.95rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: #4a5568;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        /* Action Buttons */
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #4a5568;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f7fafc;
+        }
+
+        .action-btn.approve:hover {
+            background: #c6f6d5;
+            color: #22543d;
+            border-color: #9ae6b4;
+        }
+
+        .action-btn.decline:hover {
+            background: #fed7d7;
+            color: #9b2c2c;
+            border-color: #feb2b2;
+        }
+
+        .action-btn.edit:hover {
+            background: #ebf8ff;
+            color: #2b6cb0;
+            border-color: #90cdf4;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            background: white;
+            border-top: 1px solid #edf2f7;
+        }
+
+        .page-info {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .page-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            color: #4a5568;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #f7fafc;
+            border-color: #cbd5e0;
+        }
+
+        .page-btn.active {
+            background: var(--primary-color, #0056b3);
+            color: white;
+            border-color: var(--primary-color, #0056b3);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f7fafc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>MedicPulse</h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-chart-pie"></i> Dashboard</a></li>
+                <li><a href="add-doctor.html"><i class="fas fa-user-plus"></i> Add Doctor</a></li>
+                <li><a href="manage-doctors.html"><i class="fas fa-user-md"></i> Manage Doctors</a></li>
+                <li><a href="appointments.html" class="active"><i class="fas fa-calendar-check"></i> Appointments</a>
+                </li>
+                <li><a href="patients.html"><i class="fas fa-users"></i> Patients</a></li>
+                <li><a href="analytics.html"><i class="fas fa-poll"></i> Analytics</a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+
+        <div class="main-wrapper">
+            <!-- Header -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="system-name">MedicPulse Admin Panel</span>
+                </div>
+                <div class="nav-right">
+                    <div class="user-profile">
+                        <span class="user-name">Admin User</span>
+                        <div class="notification-icon"><i class="fas fa-bell"></i></div>
+                    </div>
+                    <!-- Fixed: Added professional logout button to the header -->
+                    <a href="../login.html" class="logout-btn"
+                        style="margin-left: 20px; padding: 8px 16px; background: #ffebee; color: #c62828; border-radius: 6px; font-weight: 500; border: 1px solid #ffcdd2; display: flex; align-items: center; gap: 8px; transition: 0.2s;"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main class="content-area">
+                <div class="page-header"
+                    style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;">
+                    <div>
+                        <h1>Appointments</h1>
+                        <p>Manage, review, and schedule all hospital appointments.</p>
+                    </div>
+                    <button class="btn btn-primary" style="padding: 10px 20px; font-size: 0.95rem;"
+                        onclick="window.location.href='add-appointment.html'">
+                        <i class="fas fa-plus" style="margin-right: 8px;"></i> New Appointment
+                    </button>
+                </div>
+
+                <!-- Professional Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search by patient, ID, or doctor...">
+                    </div>
+                    <div class="filters">
+                        <div class="filter-btn">
+                            <i class="far fa-calendar-alt"></i> Today
+                        </div>
+                        <select class="filter-select">
+                            <option value="">All Departments</option>
+                            <option value="cardio">Cardiology</option>
+                            <option value="neuro">Neurology</option>
+                            <option value="peds">Pediatrics</option>
+                            <option value="ortho">Orthopedics</option>
+                        </select>
+                        <select class="filter-select">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button class="filter-btn" style="background: #f7fafc;" title="Export Data">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Details</th>
+                                <th>Consulting Doctor</th>
+                                <th>Schedule</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Alice Smith</strong>
+                                        <small>ID: PT-10024 &bull; Female, 34 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="doctor-cell">
+                                        <div class="doc-avatar">JD</div>
+                                        <div>
+                                            <div style="font-weight: 500; color: #2d3748;">Dr. John Doe</div>
+                                            <div style="font-size: 0.8rem; color: #718096;">Cardiology</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="date-time"><i class="far fa-calendar"></i> Nov 15, 2023</div>
+                                    <div class="date-time" style="margin-top: 4px; font-weight: 500;"><i
+                                            class="far fa-clock"></i> 10:00 AM</div>
+                                </td>
+                                <td><span class="status-badge status-approved"><i class="fas fa-check-circle"></i>
+                                        Approved</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Reschedule"><i
+                                                class="fas fa-calendar-day"></i></button>
+                                        <button class="action-btn decline" title="Cancel Appointment"><i
+                                                class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Bob Johnson</strong>
+                                        <small>ID: PT-10025 &bull; Male, 42 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="doctor-cell">
+                                        <div class="doc-avatar" style="background:#fff5f5; color:#c53030;">SL</div>
+                                        <div>
+                                            <div style="font-weight: 500; color: #2d3748;">Dr. Sarah Lee</div>
+                                            <div style="font-size: 0.8rem; color: #718096;">Pediatrics</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="date-time"><i class="far fa-calendar"></i> Nov 15, 2023</div>
+                                    <div class="date-time" style="margin-top: 4px; font-weight: 500;"><i
+                                            class="far fa-clock"></i> 11:30 AM</div>
+                                </td>
+                                <td><span class="status-badge status-pending"><i class="fas fa-hourglass-half"></i>
+                                        Pending Review</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn approve" title="Approve Request"><i
+                                                class="fas fa-check"></i></button>
+                                        <button class="action-btn edit" title="Edit Request"><i
+                                                class="fas fa-pencil-alt"></i></button>
+                                        <button class="action-btn decline" title="Decline"><i
+                                                class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Charlie Brown</strong>
+                                        <small>ID: PT-10026 &bull; Male, 28 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="doctor-cell">
+                                        <div class="doc-avatar" style="background:#f0fff4; color:#276749;">MC</div>
+                                        <div>
+                                            <div style="font-weight: 500; color: #2d3748;">Dr. Michael Chen</div>
+                                            <div style="font-size: 0.8rem; color: #718096;">Neurology</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="date-time"><i class="far fa-calendar"></i> Nov 15, 2023</div>
+                                    <div class="date-time" style="margin-top: 4px; font-weight: 500;"><i
+                                            class="far fa-clock"></i> 02:00 PM</div>
+                                </td>
+                                <td><span class="status-badge status-completed"><i class="fas fa-clipboard-check"></i>
+                                        Completed</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn" title="View Patient Record"><i
+                                                class="far fa-file-alt"></i></button>
+                                        <button class="action-btn" title="Download Report"><i
+                                                class="fas fa-print"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Diana Prince</strong>
+                                        <small>ID: PT-10027 &bull; Female, 30 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="doctor-cell">
+                                        <div class="doc-avatar" style="background:#faf5ff; color:#553c9a;">EW</div>
+                                        <div>
+                                            <div style="font-weight: 500; color: #2d3748;">Dr. Emily White</div>
+                                            <div style="font-size: 0.8rem; color: #718096;">Orthopedics</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="date-time"><i class="far fa-calendar"></i> Nov 16, 2023</div>
+                                    <div class="date-time" style="margin-top: 4px; font-weight: 500;"><i
+                                            class="far fa-clock"></i> 09:15 AM</div>
+                                </td>
+                                <td><span class="status-badge status-approved"><i class="fas fa-check-circle"></i>
+                                        Approved</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Reschedule"><i
+                                                class="fas fa-calendar-day"></i></button>
+                                        <button class="action-btn decline" title="Cancel Appointment"><i
+                                                class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Evan Wright</strong>
+                                        <small>ID: PT-10028 &bull; Male, 55 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="doctor-cell">
+                                        <div class="doc-avatar">JD</div>
+                                        <div>
+                                            <div style="font-weight: 500; color: #2d3748;">Dr. John Doe</div>
+                                            <div style="font-size: 0.8rem; color: #718096;">Cardiology</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="date-time"><i class="far fa-calendar"></i> Nov 16, 2023</div>
+                                    <div class="date-time" style="margin-top: 4px; font-weight: 500;"><i
+                                            class="far fa-clock"></i> 10:45 AM</div>
+                                </td>
+                                <td><span class="status-badge status-cancelled"><i class="fas fa-ban"></i>
+                                        Cancelled</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn edit" title="Rebook Appointment"><i
+                                                class="fas fa-redo"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="patient-info">
+                                        <strong>Fiona Gallagher</strong>
+                                        <small>ID: PT-10029 &bull; Female, 22 yrs</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="doctor-cell">
+                                        <div class="doc-avatar" style="background:#fffff0; color:#975a16;">RW</div>
+                                        <div>
+                                            <div style="font-weight: 500; color: #2d3748;">Dr. Robert Wilson</div>
+                                            <div style="font-size: 0.8rem; color: #718096;">General Practice</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="date-time"><i class="far fa-calendar"></i> Nov 17, 2023</div>
+                                    <div class="date-time" style="margin-top: 4px; font-weight: 500;"><i
+                                            class="far fa-clock"></i> 01:00 PM</div>
+                                </td>
+                                <td><span class="status-badge status-pending"><i class="fas fa-hourglass-half"></i>
+                                        Pending Review</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn approve" title="Approve Request"><i
+                                                class="fas fa-check"></i></button>
+                                        <button class="action-btn edit" title="Edit Request"><i
+                                                class="fas fa-pencil-alt"></i></button>
+                                        <button class="action-btn decline" title="Decline"><i
+                                                class="fas fa-times"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Professional Pagination -->
+                    <div class="pagination">
+                        <div class="page-info">
+                            Showing <strong>1</strong> to <strong>6</strong> of <strong>24</strong> entries
+                        </div>
+                        <div class="page-controls">
+                            <button class="page-btn" disabled><i class="fas fa-chevron-left"></i></button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            ...
+                            <button class="page-btn">8</button>
+                            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="../../js/script.js"></script>
+</body>
+
+</html>

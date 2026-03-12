@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - MedicPulse</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h2>MedicPulse</h2>
+    </div>
+    <ul class="sidebar-menu" id="sidebar-menu">
+        <!-- Menu items will be injected based on page -->
+    </ul>
+</div>
+
+        <div class="main-wrapper">
+<nav class="navbar">
+    <div class="nav-left">
+        <button class="sidebar-toggle" id="mobile-sidebar-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <span class="system-name">MedicPulse Hospital</span>
+    </div>
+    <div class="nav-right">
+        <div class="user-profile">
+            <span class="user-name" id="navUserName">...</span>
+            <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+        </div>
+        <a href="login.html" class="logout-btn">Logout</a>
+    </div>
+</nav>
+
+            <!-- Content Area -->
+            <main class="content-area">
+                <div class="page-header">
+                    <h1 id="welcomeMessage">Welcome!</h1>
+                    <p>Here is an overview of your health activities.</p>
+                </div>
+
+                <div class="stats-container">
+                    <div class="card stat-card">
+                        <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                        <div class="stat-info">
+                            <h3>Upcoming Appointment</h3>
+                            <p class="stat-value" id="nextApptDate">Loading...</p>
+                            <p id="nextApptDetails" style="font-size: 0.8rem; color: var(--text-muted);">Please wait</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon"><i class="fas fa-file-medical"></i></div>
+                        <div class="stat-info">
+                            <h3>Past Visits</h3>
+                            <p class="stat-value" id="pastVisitsCount">--</p>
+                            <p id="lastVisitDetails" style="font-size: 0.8rem; color: var(--text-muted);">Calculating...</p>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon"><i class="fas fa-bell"></i></div>
+                        <div class="stat-info">
+                            <h3>Notifications</h3>
+                            <p class="stat-value" id="notifCount">0 New</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">View all updates</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 20px;">Health Summary</h3>
+                    <p>Recent reports and upcoming checkups are listed here. Stay healthy and hydrated!</p>
+                    <div class="chart-placeholder" style="height: 150px;">
+                        Patient Health Progress Chart Placeholder
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="../js/script.js"></script>
+</body>
+
+</html>
